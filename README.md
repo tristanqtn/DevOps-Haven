@@ -1,5 +1,5 @@
 # Usefull links :
-  course repo : https://github.com/adaltas/ece-webtech-2023-fall
+  course repo : https://github.com/adaltas/ece-devops-2023-fall
 
 # Notes : 
-  teachers GitHub tag : sergkudinov
+  teachers GitHub tag : gonzaloetjo
