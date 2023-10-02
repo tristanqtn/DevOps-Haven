@@ -1,7 +1,6 @@
 const express = require("express");
 const userRouter = require("./routes/user");
 const bodyParser = require("body-parser");
-const expressSwagger = require("express-swagger-generator")(app);
 
 let options = {
   swaggerDefinition: {
@@ -20,6 +19,10 @@ let options = {
 };
 
 const app = express();
+
+const expressSwagger = require("express-swagger-generator")(app);
+expressSwagger(options);
+
 const port = process.env.PORT || 3000;
 
 const db = require("./dbClient");
