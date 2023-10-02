@@ -18,9 +18,9 @@ Before starting configuring CI/CD to a software project, you need to have its re
 
 ## Part 1. Continuous Integration with GitHub Actions
 
-[x] Read the [introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions).
+- [x] Read the [introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/introduction-to-github-actions).
 
-[x] Create a CI workflow for the Node.js using this [documentation](https://docs.github.com/en/actions/guides/building-and-testing-nodejs).
+- [x] Create a CI workflow for the Node.js using this [documentation](https://docs.github.com/en/actions/guides/building-and-testing-nodejs).
 
 > Note. Don't forget to commit and push your workflow configuration in the `.github/workflows` folder **under the root** of you Git repository.
 
@@ -34,12 +34,12 @@ The build failed since we want the GitHub Action to run the test script and this
 
 To correct this problem we will add in our workflow a redis installation. Thus, the test script will run correctly and the build could succeed.
 
-[x] Improve your Workflow to connect Node.js application to Redis using this documentation:
+- [x] Improve your Workflow to connect Node.js application to Redis using this documentation:
 
 - [About service containers](https://docs.github.com/en/actions/guides/about-service-containers)
 - [Creating Redis service containers](https://docs.github.com/en/actions/guides/creating-redis-service-containers)
 
-[x] Practice a regular workflow of the software development life cycle, for example for completing the Lab 3 instructions
+- [x] Practice a regular workflow of the software development life cycle, for example for completing the Lab 3 instructions
 
 Create a pull request to the `master` branch:
 
@@ -49,7 +49,7 @@ Create a pull request to the `master` branch:
 - wait for GitHub Actions to test it (observe the process on GitHub -> Actions page)
 - review the commit and Merge this Pull Request into the `master` branch
 
-[ ] Explore the GitHub Actions log on GitHub (under the "Actions" tab).
+- [ ] Explore the GitHub Actions log on GitHub (under the "Actions" tab).
 
 ## Part 2. Continuous Delivery (Deployment) with Heroku
 
@@ -57,24 +57,24 @@ As of November 28th 2022, Heroku [stops the free tier](https://blog.heroku.com/n
 
 The following instructions for Heroku are now legacy.
 
-[ ] Create an account on [Heroku](https://heroku.com)
+- [ ] Create an account on [Heroku](https://heroku.com)
 
-[ ] Create an app on [Heroku](https://dashboard.heroku.com/new-app) and configure it.
+- [ ] Create an app on [Heroku](https://dashboard.heroku.com/new-app) and configure it.
 
 Under the "Deploy tab" do:
 
 - sync the app with the GitHub repository
 
-[ ] Add Redis service to Heroku deployment - https://elements.heroku.com/addons/heroku-redis
+- [ ] Add Redis service to Heroku deployment - https://elements.heroku.com/addons/heroku-redis
 
 > Note. Redis service on Heroku is free, but it requires adding credit card information. Considering this limitation we will not run Redis on Heroku, and the application will be partially non-functional (it will print the "Hello world!" message on the home page, but the user API will not work). However, it will be enough to experience our CI/CD pipeline.
 
-[ ] Configure the workflow to deploy to Heroku using [this guide](https://github.com/marketplace/actions/deploy-to-heroku).
+- [ ] Configure the workflow to deploy to Heroku using [this guide](https://github.com/marketplace/actions/deploy-to-heroku).
 
-[ ] Practice a regular workflow of the software development life cycle like in Part 2.
+- [ ] Practice a regular workflow of the software development life cycle like in Part 2.
 
-[ ] Test your public domain on Heroku.
+- [ ] Test your public domain on Heroku.
 
 ## Bonus tasks
 
-[x] Integrate Swagger UI using this package - https://www.npmjs.com/package/express-swagger-generator
+- [x] Integrate Swagger UI using this package - https://www.npmjs.com/package/express-swagger-generator
