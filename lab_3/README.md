@@ -20,7 +20,7 @@ This application is written on NodeJS and it uses Redis database.
 Go to the root directory of the application (where `package.json` file located) and run:
 
 ```
-npm install 
+npm install
 ```
 
 ## Usage
@@ -61,3 +61,8 @@ From the root directory of the project, run:
 ```
 npm test
 ```
+
+## Api architecture
+
+A Swagger generator has been added to the API. The API description is available at the following address:
+http://localhost:3000/api-docs
