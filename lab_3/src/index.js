@@ -2,6 +2,8 @@ const express = require("express");
 const userRouter = require("./routes/user");
 const bodyParser = require("body-parser");
 
+const port = process.env.PORT || 3000;
+
 let options = {
   swaggerDefinition: {
     info: {
@@ -10,8 +12,9 @@ let options = {
       version: "1.0.0",
     },
     host: "localhost:3000",
-    basePath: "/v1",
+    basePath: "/",
     produces: ["application/json"],
+    consumes: ["application/json"],
     schemes: ["http"],
   },
   basedir: __dirname, //app absolute path
@@ -22,8 +25,6 @@ const app = express();
 
 const expressSwagger = require("express-swagger-generator")(app);
 expressSwagger(options);
-
-const port = process.env.PORT || 3000;
 
 const db = require("./dbClient");
 db.on("error", (err) => {
