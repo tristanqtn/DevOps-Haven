@@ -49,7 +49,7 @@ Create a pull request to the `master` branch:
 - wait for GitHub Actions to test it (observe the process on GitHub -> Actions page)
 - review the commit and Merge this Pull Request into the `master` branch
 
-- [ ] Explore the GitHub Actions log on GitHub (under the "Actions" tab).
+- [x] Explore the GitHub Actions log on GitHub (under the "Actions" tab).
 
 ## Part 2. Continuous Delivery (Deployment) with Heroku
 

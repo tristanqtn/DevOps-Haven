@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     #defining env variable for directory architecture
     env:
-      working-directory: ./lab_3
+      working-directory: ./userapi
       #defining the default running directory
     defaults:
       run:
-        working-directory: ./lab_3
+        working-directory: ./userapi
 
     strategy:
       matrix:
