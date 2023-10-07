@@ -29,7 +29,8 @@ jobs:
         with:
           redis-version: "6.x"
       #REDIS test
-      - run: redis-cli ping
+      - name: Redis test
+        run: redis-cli ping
         working-directory: ${{env.working-directory}}
       #NODE install
       - uses: actions/checkout@v3
@@ -40,8 +41,21 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       #install project dependencies
-      - run: npm install
+      - name: Installing Node dependencies
+        run: npm install
         working-directory: ${{env.working-directory}}
       #run test script to check if the build in working
-      - run: npm test
+      - name: Running tests
+        run: npm test
         working-directory: ${{env.working-directory}}
+      #zipping the artificat to then deploy it
+      - name: Zip Artifact for deployement
+        run: |
+          zip -r node-app.zip .
+      #publishing the artifact
+      - name: Upload artifact for deployement
+        uses: actions/upload-artifact@v2
+        with:
+          name: node-app
+          path: node-app.zip
+      
