@@ -63,7 +63,6 @@ jobs:
         with:
           name: node-app
           path: node-app.zip
-          cache-dependency-path: ${{env.working-directory}}
 
   deploy:
       permissions:
