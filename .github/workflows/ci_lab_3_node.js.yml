@@ -37,7 +37,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          cache-dependency-path: ./lab_3
+          cache-dependency-path: ${{env.working-directory}}
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       #install project dependencies
@@ -52,10 +52,12 @@ jobs:
       - name: Zip Artifact for deployement
         run: |
           zip -r node-app.zip .
+        working-directory: ${{env.working-directory}}
       #publishing the artifact
       - name: Upload artifact for deployement
         uses: actions/upload-artifact@v2
         with:
           name: node-app
           path: node-app.zip
+          cache-dependency-path: ${{env.working-directory}}
       
