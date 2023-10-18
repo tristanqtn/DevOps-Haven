@@ -68,6 +68,11 @@ Before you can start the lab, you have to:
    ```
    docker ps
    ```
+```   
+CONTAINER ID   IMAGE                COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+d1a43dd2822d   hello-world-docker   "docker-entrypoint.s…"   23 seconds ago   Up 22 seconds   0.0.0.0:12345->8080/tcp, :::12345->8080/tcp   practical_lehmann
+```
+
 3. Open your web browser and go to `http://localhost:12345`
 4. Print the logs of the container with:
    ```
@@ -78,15 +83,29 @@ Before you can start the lab, you have to:
    ```
    docker stop <CONTAINER_ID>
    ```
+```
+> hello_world_docker@1.0.0 start /usr/src/app
+> node server.js
+
+Running on http://localhost:8080
+```
+
+The port 8080 of the container has been mapped to the port 123456 of the localhost (while building the image).
 
 ## 4. Share your Docker container with a classmate
 
 1. Modify the message printed in the `server.js` (you can add your name for example)
 2. Rebuild the Docker container (with a different name) with this modified code and see if you can run it, then navigate to the web app in your browser
+
+```bash
+docker build -t hello-world-docker-tristan .
+docker run -p 12345:8080 -d hello-world-docker-tristan
+```
+
 3. Register on [Docker Hub](https://hub.docker.com/)
 4. Tag your container with the following command:
    ```
-   docker tag hello-world-docker <DOCKER_ACCOUNT_NAME>/<CUSTOM_IMAGE_NAME>
+   docker tag hello-world-dockertristanqtn/hello-world-docker-tristan
    ```
    where `DOCKER_ACCOUNT_NAME` - is your account on Docker Hub, `CUSTOM_IMAGE_NAME` - the custom name of the image.
 5. Log in to Docker Hub from your terminal:
@@ -95,13 +114,13 @@ Before you can start the lab, you have to:
    ```
 6. Push the docker image to Docker Hub:
    ```
-   docker push <DOCKER_ACCOUNT_NAME>/<CUSTOM_IMAGE_NAME>
+   docker push tristanqtn/hello-world-docker-tristan
    ```
 7. See if you can find the image in your [repositories](https://hub.docker.com/repositories) in the Docker Hub
 8. Ask a classmate to retrieve your Docker container and run it:
    ```
-   docker pull <DOCKER_ACCOUNT_NAME>/<CUSTOM_IMAGE_NAME>
-   docker run -p 12345:8080 -d <DOCKER_ACCOUNT_NAME>/<CUSTOM_IMAGE_NAME>
+   docker pull tristanqtn/hello-world-docker-tristan
+   docker run -p 12345:8080 -d tristanqtn/hello-world-docker-tristan
    ```
 
 ## 5. Build and run a multiple container app with Docker Compose
