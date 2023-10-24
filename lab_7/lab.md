@@ -73,9 +73,13 @@ minikube status
 
 8. Make sure that the web app is responding inside the container by querying it with `curl`
 
-   > **Hint.** The port on which the app responds is defined in the `/server.js` JavaScript file
+`Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-855d5cc575-7tt5c | v=1``
+
+> **Hint.** The port on which the app responds is defined in the `/server.js` JavaScript file
 
 9. Are you able to query the web app outside of the pod (from your local machine)?
+
+We are not able to reach the server running in the pod because the port is not exposed outside the pod. Inn order to access it from the local machine the port of the container should be connected to a local port of the device.
 
 ## 3. Learn to expose a Kubernetes service to the outside
 
@@ -85,12 +89,25 @@ minikube status
    kubectl expose deployments/$DEPLOYMENT_NAME --type="NodePort" --port $PORT_NUMBER
    ```
 
+   ```
+   kubectl expose deployments/kubernetes-bootcamp --type="NodePort" --port 8080
+   ```
+
    > **Hint.** You need to replace `$DEPLOYMENT_NAME` with the actual name of the `deployment` as well as `$PORT_NUMBER`
 
 2. Find out on which port the service has been attached with:
+
    ```
    kubectl get services
    ```
+
+   `
+   NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
+   kubernetes ClusterIP 10.96.0.1 <none> 443/TCP 23h
+   kubernetes-bootcamp NodePort 10.104.156.78 <none> 8080:31712/TCP 33s
+
+   `
+
 3. Get the IP of your Minikube VM with:
    ```
    minikube ip
@@ -103,6 +120,10 @@ minikube status
 minikube service $SERVICE_NAME
 ```
 
+```
+curl http://192.168.49.2:31712
+```
+
 ## 4. Learn to scale up and down a Kubernetes deployment
 
 1. Scale up your deployment to a total number of 5 pods with:
@@ -113,21 +134,55 @@ kubectl scale deployments/kubernetes-bootcamp --replicas=5
 
 2. Make sure that you have 5 pods running using one of the commands we have seen in part 2 of the lab. Which command did you use?
 
+```kubectl get pods
+
+NAME                                   READY   STATUS    RESTARTS   AGE
+kubernetes-bootcamp-855d5cc575-789rw   1/1     Running   0          2m11s
+kubernetes-bootcamp-855d5cc575-7tt5c   1/1     Running   0          55m
+kubernetes-bootcamp-855d5cc575-kjz5k   1/1     Running   0          2m12s
+kubernetes-bootcamp-855d5cc575-m8pvj   1/1     Running   0          2m12s
+kubernetes-bootcamp-855d5cc575-rvq99   1/1     Running   0          2m12s
+
+```
+
 3. Open the exposed service through your web browser again.
    Force refresh a couple of times using `CTRL+F5`
    What is happening? Why?
+
+We sometimes change the pod on whic the server is running when refreshing the app. So by refreshing we can switch from pods to pods exposed on the same application.
+
 4. Scale down again your deployment to 2 pods and confirm the other 3 are not running anymore.
+
+```
+kubectl scale deployments/kubernetes-bootcamp --replicas=3
+```
+
+```kubectl get pods
+NAME                                   READY   STATUS        RESTARTS   AGE
+kubernetes-bootcamp-855d5cc575-789rw   1/1     Terminating   0          5m35s
+kubernetes-bootcamp-855d5cc575-7tt5c   1/1     Running       0          58m
+kubernetes-bootcamp-855d5cc575-kjz5k   1/1     Running       0          5m36s
+kubernetes-bootcamp-855d5cc575-m8pvj   1/1     Running       0          5m36s
+kubernetes-bootcamp-855d5cc575-rvq99   1/1     Terminating   0          5m36s
+```
 
 ## 5. Run a multiple pod application in Kubernetes
 
 1. Prepare to hit `CTRL+F5` on your browser multiple times right after launching the following command:
 2. Update the Docker image used by the `deployment` with:
    ```
-   kubectl set image deployments/$DEPLOYMENT_NAME kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+   kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
    ```
-3. What happened to the web page?
+3. What happened to the web page? The version running on the pod has changed from v=1 to v=2/
+
 4. Update the Docker image used by the `deployment` again by setting the image to `jocatalin/kubernetes-bootcamp:v3`
-5. List all of the running pods, what is happening here?
+
+```kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v3
+
+```
+
+5. List all of the running pods, what is happening here? A new pod is currenctly being created.
+
 6. Cancel the previous operation by running:
    ```
    kubectl rollout undo deployments/kubernetes-bootcamp
