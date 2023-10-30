@@ -6,23 +6,23 @@ This lab work covers the basics of Git.
 
 This lab work can be done in a group of **2 students**.
 
-1. Perform the GitHub Desktop Tutorial
-2. Create a repository and clone it on your computer
-3. Create a branch and navigate between branches
-4. Modify a file in the repository and push the modifications
-5. Manage conflicts
-6. Redo the lab using command line interface (CLI)
+- [x] Perform the GitHub Desktop Tutorial
+- [x] Create a repository and clone it on your computer
+- [x] Create a branch and navigate between branches
+- [x] Modify a file in the repository and push the modifications
+- [x] Manage conflicts
+- [x] Redo the lab using command line interface (CLI)
 
 ## Before starting
 
-1. Create a GitHub account: https://github.com/
-2. Install GitHub Desktop from this url: https://desktop.github.com/
-3. Install an IDE or a text editor (ex: https://code.visualstudio.com/ or https://atom.io/)
+- [x] Create a GitHub account: https://github.com/
+- [x] Install GitHub Desktop from this url: https://desktop.github.com/
+- [x] Install an IDE or a text editor (ex: https://code.visualstudio.com/ or https://atom.io/)
 
 ## 1. Perform the GitHub Desktop Tutorial
 
-1. Launch GitHub Desktop
-2. Start the GitHub Desktop Tutorial by clicking "Create a Tutorial Repository ..." and follow the instructions
+- [x] Launch GitHub Desktop
+- [x] Start the GitHub Desktop Tutorial by clicking "Create a Tutorial Repository ..." and follow the instructions
 
 ![GitHub Desktop Tutorial](image/github-tutorial.png)
 
@@ -30,24 +30,22 @@ This lab work can be done in a group of **2 students**.
 
 **A single member** of the group creates a repository:
 
-1. Login to [Github.com](https://github.com/)
-2. Navigate to the **"Your repositories"** page
-3. Click on **"New"**
-
-- Choose a name
-- Chose the **"Public"** option
-- Check the box **"Add a README file"**
-- Check the box **"Add .gitignore"** with the **"Node"** template
-
-4. Navigate to the created repository, then to the **Settings → Manage Access** page
-5. Click on **"Invite a collaborator"** and add the other members of your group
+- [x] Login to [Github.com](https://github.com/)
+- [x] Navigate to the **"Your repositories"** page
+- [x] Click on **"New"**
+- [x] Choose a name
+- [x] Chose the **"Public"** option
+- [x] Check the box **"Add a README file"**
+- [x] Check the box **"Add .gitignore"** with the **"Node"** template
+- [x] Navigate to the created repository, then to the **Settings → Manage Access** page
+- [x] Click on **"Invite a collaborator"** and add the other members of your group
 
 **All group members** clone the repository:
 
-6. Open GitHub Desktop
-7. Click on **"Clone a repository from the Internet"**
-8. **GitHub.com** → Filter your repositories
-9. Click on “Clone”
+- [x] Open GitHub Desktop
+- [x] Click on **"Clone a repository from the Internet"**
+- [x] **GitHub.com** → Filter your repositories
+- [x] Click on “Clone”
 
 You now have a copy of the local repository
 
@@ -55,9 +53,9 @@ You now have a copy of the local repository
 
 **A single member** of the group creates the `develop` branch:
 
-1. In GitHub Desktop: **Current branch → New branch**
+- [x] In GitHub Desktop: **Current branch → New branch**
 
-2. Choose the name of the branch (`develop`) and **"Create branch"**
+- [x] Choose the name of the branch (`develop`) and **"Create branch"**
 
 You can now navigate (= checkout) between the master and develop branches.
 
@@ -65,21 +63,18 @@ You can now navigate (= checkout) between the master and develop branches.
 
 **A single member** of the group modifies the **"README.md"** file and pushes to the `develop` branch:
 
-1. Modify the **"README.md"** file entirely:
-
-- Open the repository in your IDE
-- Replace the entire contents of the **"README.md"** file
-
-2. In GitHub Desktop:
-
-- Choose a commit message ("Summary")
-- Click on **"Commit to develop"**
-- Use **"Publish branch"** to push your changes to the remote repository
+- [x] Modify the **"README.md"** file entirely:
+- [x] Open the repository in your IDE
+- [x] Replace the entire contents of the **"README.md"** file
+- [x] In GitHub Desktop:
+- [x] Choose a commit message ("Summary")
+- [x] Click on **"Commit to develop"**
+- [x] Use **"Publish branch"** to push your changes to the remote repository
 
 **The other members** of the group get the changes:
 
-3. Use **"Fetch origin"** to synchronize your local repository with remote changes
-4. Navigate to the develop branch and watch your files change in your IDE
+- [x] Use **"Fetch origin"** to synchronize your local repository with remote changes
+- [x] Navigate to the develop branch and watch your files change in your IDE
 
 ## 5. Manage conflicts
 
@@ -87,24 +82,25 @@ A conflict occurs when a part of a file has been modified on 2 branches which mu
 
 Both **2 members** of the group create a branch from `develop` and modify the same part (same lines) of the **README.md** file:
 
-1. Create a branch `dev-firstname` **"based on ... develop"**
-2. Edit the **README.md** file
-3. Commit changes
-4. Push your changes
+- [x] Create a branch `dev-firstname` **"based on ... develop"**
+- [x] Edit the **README.md** file
+- [x] Commit changes
+- [x] Push your changes
 
 Alternately, each member merges the new branches into `develop`:
 
-5. Checkout the `develop` branch
-6. Click on **"Merge into current branch ..."**
-7. Select branch
-8. Push your changes
-9. **The 2nd member** of the group will encounter a conflict:
+- [x] Checkout the `develop` branch
+- [x] Click on **"Merge into current branch ..."**
+- [x] Select branch
+- [x] Push your changes
 
-- Open your IDE as suggested by GitHub Desktop
-- The conflict materialize as follows:
+**The 2nd member** of the group will encounter a conflict:
 
-- To resolve the conflict, keep either the `HEAD` part, or the `dev-firstname` part and delete the other lines (including the `====` and `>>>>` lines)
-- Once the lines are deleted you can commit the merge from GitHub Desktop:
+- [x] Open your IDE as suggested by GitHub Desktop
+- [x] The conflict materialize as follows:
+
+- [x] To resolve the conflict, keep either the `HEAD` part, or the `dev-firstname` part and delete the other lines (including the `====` and `>>>>` lines)
+- [x] Once the lines are deleted you can commit the merge from GitHub Desktop:
 
 ## 6. Redo the lab using command line interface (CLI)
 

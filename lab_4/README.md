@@ -43,11 +43,11 @@ To correct this problem we will add in our workflow a redis installation. Thus, 
 
 Create a pull request to the `master` branch:
 
-- create a new branch and publish it to your remote GitHub repository
-- make any change in your source code, commit and push it
-- make a **Pull Request** on GitHub
-- wait for GitHub Actions to test it (observe the process on GitHub -> Actions page)
-- review the commit and Merge this Pull Request into the `master` branch
+- [x] create a new branch and publish it to your remote GitHub repository
+- [x] make any change in your source code, commit and push it
+- [x] make a **Pull Request** on GitHub
+- [x] wait for GitHub Actions to test it (observe the process on GitHub -> Actions page)
+- [x] review the commit and Merge this Pull Request into the `master` branch
 
 - [x] Explore the GitHub Actions log on GitHub (under the "Actions" tab).
 
@@ -74,6 +74,10 @@ Under the "Deploy tab" do:
 - [ ] Practice a regular workflow of the software development life cycle like in Part 2.
 
 - [ ] Test your public domain on Heroku.
+
+### Important
+
+Deployement has been done on Azure instead of Heroku.
 
 ## Bonus tasks
 
