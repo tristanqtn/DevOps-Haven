@@ -149,7 +149,7 @@ kubernetes-bootcamp-855d5cc575-rvq99   1/1     Running   0          2m12s
       Force refresh a couple of times using `CTRL+F5`
       What is happening? Why?
 
-We sometimes change the pod on whic the server is running when refreshing the app. So by refreshing we can switch from pods to pods exposed on the same application.
+We sometimes change the pod on which the server is running when refreshing the app. So by refreshing we can switch from pods to pods exposed on the same application.
 
 - [x] Scale down again your deployment to 2 pods and confirm the other 3 are not running anymore.
 
@@ -196,24 +196,30 @@ kubernetes-bootcamp-855d5cc575-rvq99   1/1     Terminating   0          5m36s
   kubectl delete service $SERVICE_NAME
   kubectl delete deployment $DEPLOYMENT_NAME
   ```
-- [ ] Using the [deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/), fill out the blank (`TO COMPLETE #1`) in [`./lab/deployment.yaml`](./lab/deployment.yaml) to define a deployment based on the one we ran in part 2.
-- [ ] Once you completed the file, run:
+- [x] Using the [deployment documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/), fill out the blank (`TO COMPLETE #1`) in [`./lab/deployment.yaml`](./lab/deployment.yaml) to define a deployment based on the one we ran in part 2.
+- [x] Once you completed the file, run:
 
   ```
   kubectl apply -f deployment.yaml
   ```
 
-  Are the pods running?
+  ```
+  kubectl get deployments
+  NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
+  kubernetes-bootcamp   1/1     1            1           27s
+  ```
 
-- [ ] Using the [service documentation](https://kubernetes.io/docs/concepts/services-networking/service/), fill out the blank in [`./lab/service.yaml`](./lab/service.yaml)
-- [ ] Once you completed the file, run:
+Are the pods running? To test if pod is running we SSH into it and curl the localhost on port 8080. We should obtain a responce of the app. Yes the pod is running but post is not yet exposed. We must define a service to expose the port.
+
+- [x] Using the [service documentation](https://kubernetes.io/docs/concepts/services-networking/service/), fill out the blank in [`./lab/service.yaml`](./lab/service.yaml)
+- [x] Once you completed the file, run:
   ```
   kubectl apply -f service.yaml
   ```
   Can you access the service through your web browser?
-- [ ] Fill out `TO COMPLETE #2` inside [`./lab/deployment.yaml`](./lab/deployment.yaml) to create 3 replicas of your app.
-- [ ] Once you completed the file, run:
+- [x] Fill out `TO COMPLETE #2` inside [`./lab/deployment.yaml`](./lab/deployment.yaml) to create 3 replicas of your app.
+- [x] Once you completed the file, run:
   ```
   kubectl apply -f deployment.yaml
   ```
-  Force refresh on the browser a couple of times. Are you hitting different replicas?
+  Force refresh on the browser a couple of times. Are you hitting different replicas? Yes by refreshing the page we sometime change pod we can see it by the `Running on` clause on the message send by the server.
