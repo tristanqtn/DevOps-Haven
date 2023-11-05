@@ -15,12 +15,15 @@ spec:
         app: nginx-host-path
     spec:
       volumes:
-        # TODO complete
+        - name: nginx-host-path-volume
+          hostPath:
+            path: /mnt/hostPath/
       containers:
-      - name: nginx-container
-        image: nginx
-        ports:
-          - containerPort: 80
-            name: "http-server"
-        volumeMounts:
-          # TODO complete
+        - name: nginx-container
+          image: nginx
+          ports:
+            - containerPort: 80
+              name: "http-server"
+          volumeMounts:
+            - name: nginx-host-path-volume
+              mountPath: /usr/share/nginx/html
