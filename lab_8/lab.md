@@ -176,6 +176,69 @@ Hello from Kubernetes storage!
 
 Reference to this tutorial and reproduce all of the steps - https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
 
+- [x] Create file path:
+
+```
+sudo mkdir /mnt/data
+```
+
+- [x] Create response file:
+
+```
+sudo sh -c "echo 'Hello from Kubernetes storage' > /mnt/data/index.html"
+```
+
+- [x] Build the PV volume with:
+
+```
+kubectl apply -f lab/persistent/pv-volume.yml
+```
+
+Check the correct deployment of the PV volume.
+
+```
+kubectl get pv task-pv-volume
+```
+
+- [x] Build the PV claim with:
+
+```
+kubectl apply -f lab/persistent/pv-claim.yml
+```
+
+Check the correct deployment of the PV volume.
+
+```
+kubectl get pv pv-volume
+kubectl get pvc pv-claim
+```
+
+- [x] Build the PV pod with:
+
+```
+kubectl apply -f lab/persistent/pv-pod.yml
+```
+
+Check the correct deployment of the PV volume.
+
+```
+kubectl get pod pv-pod
+```
+
+- [x] Get a shell to the container running in your Pod:
+
+```
+kubectl exec -it task-pv-pod -- /bin/bash
+```
+
+- [x] Cleam all dependencies:
+
+```
+kubectl delete pod pv-pod
+kubectl delete pvc pv-claim
+kubectl delete pv pv-volume
+```
+
 ## Bonus tasks
 
 1. Configure a Pod to use Secret - https://kubernetes.io/docs/concepts/configuration/secret/
