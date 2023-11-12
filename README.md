@@ -1,22 +1,73 @@
-# Useful links :
+# User API web application
 
----
+It is a basic NodeJS web application exposing REST API that creates and stores user parameters in [Redis database](https://redis.io/).
 
-course repo : https://github.com/adaltas/ece-devops-2023-fall
+## Functionality
 
-# Lab progression
+1. Start a web server
+2. Create a user
 
-- [x] lab 1: devops introduction
-- [x] lab 2: scm
-- [x] lab 3: continuous-testing
-- [x] lab 4: ci-cd
-- [x] lab 5: infrustructure-as-code
-- [x] lab 6: docker-containers
-- [x] lab 7: container-orchestration
-- [ ] lab 8: storage-in-kubernetes
-- [ ] lab 8: cloud-native
-- [ ] lab 8: monitoring
+## Installation
 
-# Notes :
+This application is written on NodeJS and it uses Redis database.
 
-teachers GitHub tag : gonzaloetjo
+1. [Install NodeJS](https://nodejs.org/en/download/)
+
+2. [Install Redis](https://redis.io/download)
+
+3. Install application
+
+Go to the root directory of the application (where `package.json` file located) and run:
+
+```
+npm install
+```
+
+## Usage
+
+1. Start a web server
+
+From the root directory of the project run:
+
+```
+npm start
+```
+
+It will start a web server available in your browser at http://localhost:3000.
+
+2. Create a user
+
+Send a POST (REST protocol) request using terminal:
+
+```bash
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"username":"sergkudinov","firstname":"sergei","lastname":"kudinov"}' \
+  http://localhost:3000/user
+```
+
+It will output:
+
+```
+{"status":"success","msg":"OK"}
+```
+
+Another way to test your REST API is to use [Postman](https://www.postman.com/).
+
+## Testing
+
+From the root directory of the project, run:
+
+```
+npm test
+```
+
+## Api architecture
+
+A Swagger generator has been added to the API. The API description is available at the following address:
+http://localhost:3000/api-docs
+
+```bash
+docker build -t userapi .
+docker run -p 8080:8080 -d userapi
+```
