@@ -2,6 +2,30 @@
 
 ## v1.0.0
 
-1. Added tests for REDIS create and get methods
-2. Added tests for API post and get methods
-3. Added a swagger generator for user API
+### Added
+
+1. Add methods get_all_keys, delete for REDIS client
+2. Add API routes for:
+   - DELETE /user/:username
+   - GET /user/keys
+3. Implement test for new REDIS client methods and API routes
+4. Add a swagger generator for user API
+5. Create Dockerfile for publishing Docker image of userapi
+
+### Changed
+
+### Fixed
+
+## v1.0.1
+
+1. Create `docker-compose.yml` to orchestrate the userapi with a REDIS container
+1. Create `.dockerignore` to prevent copying useless files in container
+1. Create `script.sh` that will be run on every userapi container startup to check health of the container and environnement with tests and then will start the application
+
+### Changed
+
+2. Refactor repo architecture
+
+### Fixed
+
+3. Dockerfile error on container startup

@@ -8,78 +8,124 @@ describe("User", () => {
     db.flushdb();
   });
 
+  after(() => {
+    db.flushdb();
+  });
+
   describe("Create", () => {
-    it("create a new user", async () => {
+    it("create a new user", (done) => {
       const user = {
-        username: "sergkudinov",
-        firstname: "Sergei",
-        lastname: "Kudinov",
+        username: "tristanqtn",
+        firstname: "tristan",
+        lastname: "querton",
       };
-      await userController.create(user, (err, result) => {
+      userController.create(user, (err, result) => {
         expect(err).to.be.equal(null);
         expect(result).to.be.equal("OK");
+        done();
       });
     });
 
-    it("passing wrong user parameters", async () => {
+    it("passing wrong user parameters", (done) => {
       const user = {
-        firstname: "Sergei",
-        lastname: "Kudinov",
+        firstname: "tristan",
+        lastname: "querton",
       };
-      await userController.create(user, (err, result) => {
+      userController.create(user, (err, result) => {
         expect(err).to.not.be.equal(null);
         expect(result).to.be.equal(null);
+        done();
       });
     });
 
-    it("avoid creating an existing user", async () => {
+    it("avoid creating an existing user", (done) => {
       const user = {
-        username: "sergkudinov",
-        firstname: "Sergei",
-        lastname: "Kudinov",
+        username: "tristanqtn",
+        firstname: "tristan",
+        lastname: "querton",
       };
-      await userController.create(user, (err, result) => {
-        expect(err).not.to.be.equal(null);
+      // Create a user
+      userController.create(user, () => {
+        // Create the same user again
+        userController.create(user, (err, result) => {
+          expect(err).to.not.be.equal(null);
+          expect(result).to.be.equal(null);
+          done();
+        });
       });
     });
   });
 
-  // TODO Create test for the get method
   describe("Get", () => {
-    it("get a user by username", async () => {
-      //     // 1. First, create a user to make this unit test independent from the others
+    it("get a user by username", (done) => {
       const user = {
         username: "tristanqtn",
-        firstname: "Tristan",
-        lastname: "Querton",
+        firstname: "tristan",
+        lastname: "querton",
       };
-
-      //     // 2. Then, check if the result of the get method is correct
-      userController.create(user, (err, result) => {
-        expect(err).to.not.be.equal(null);
-        expect(result).to.be.equal(null);
-      });
-
-      await userController.get(user.username, (err, result) => {
-        expect(err).to.be.equal(null);
-        expect(result.firstname).to.be.equal(user.firstname);
-        expect(result.lastname).to.be.equal(user.lastname);
+      // Create a user
+      userController.create(user, () => {
+        // Get an existing user
+        userController.get(user.username, (err, result) => {
+          expect(err).to.be.equal(null);
+          expect(result).to.be.deep.equal({
+            firstname: "tristan",
+            lastname: "querton",
+          });
+          done();
+        });
       });
     });
-    //
-    it("cannot get a user when it does not exist", async () => {
-      //     // Chech with any invalid user
-      //     // 1. First, create a user to make this unit test independent from the others
-      const user = {
-        username: "helloworld",
-        firstname: "Hello",
-        lastname: "World",
-      };
-      //     // 2. Then, check if the result of the get method is correct
-      await userController.get(user.username, (err, result) => {
-        expect(err).to.be.equal(null);
+
+    it("can not get a user when it does not exist", (done) => {
+      userController.get("invalid", (err, result) => {
+        expect(err).to.not.be.equal(null);
+        expect(result).to.be.equal(null);
+        done();
       });
-      //
+    });
+  });
+  describe("Get keys", () => {
+    it("get the key of an existing user", (done) => {
+      const user = {
+        username: "tristanqtn",
+        firstname: "tristan",
+        lastname: "querton",
+      };
+      // Create a user
+      userController.create(user, () => {
+        // Get an existing user
+        userController.get_all_keys((err, result) => {
+          expect(err).to.be.equal(null);
+          expect(result).to.be.deep.equal(["tristanqtn"]);
+          done();
+        });
+      });
+    });
+  });
+  describe("Delete", () => {
+    it("delete an existing user", (done) => {
+      const user = {
+        username: "tristanqtn",
+        firstname: "tristan",
+        lastname: "querton",
+      };
+      userController.create(user, (err, result) => {
+        expect(err).to.be.equal(null);
+        expect(result).to.be.equal("OK");
+        userController.delete(user.username, (err, result) => {
+          expect(err).to.be.equal(null);
+          expect(result).to.be.equal(1);
+          done();
+        });
+      });
+    });
+    it("prevent deleting a non-existing user", (done) => {
+      userController.delete("dummy", (err, result) => {
+        expect(err).to.be.not.equal(null);
+        expect(result).to.be.equal(null);
+        done();
+      });
     });
   });
 });

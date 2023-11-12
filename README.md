@@ -59,7 +59,7 @@ Another way to test your REST API is to use [Postman](https://www.postman.com/).
 From the root directory of the project, run:
 
 ```
-npm test
+npm run test
 ```
 
 ## Api architecture
@@ -67,7 +67,28 @@ npm test
 A Swagger generator has been added to the API. The API description is available at the following address:
 http://localhost:3000/api-docs
 
+## Docker
+
+Browse to the `./userapi` folder.
+
+```bash
+cd userapi
+```
+
+Build the image.
+
 ```bash
 docker build -t userapi .
-docker run -p 8080:8080 -d userapi
+```
+
+Run the container, pay attention that this container requires a REDIS DB to work well. Thus make sure another container is hosting a REDIS DB with an open port on 6379 or a redis installed and running on the device hosting the container.
+
+```bash
+docker run -p 3000:3000 -d userapi
+```
+
+## Docker Compose
+
+```bash
+docker compose up
 ```
