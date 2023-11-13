@@ -81,6 +81,12 @@ Build the image.
 docker build -t userapi .
 ```
 
+```
+docker tag userapi tristanqtn/userapi-devops
+docker login
+docker push tristanqtn/userapi-devops
+```
+
 Run the container, pay attention that this container requires a REDIS DB to work well. Thus make sure another container is hosting a REDIS DB with an open port on 6379 or a redis installed and running on the device hosting the container.
 
 ```bash
@@ -91,4 +97,25 @@ docker run -p 3000:3000 -d userapi
 
 ```bash
 docker compose up
+```
+
+## K8S
+
+```bash
+minikube start
+minikube status
+```
+
+```bash
+kubectl apply -f service.yaml
+kubectl apply -f deployment.yaml
+```
+
+```bash
+kubectl get pods
+kubectl logs $NAME_OF_NODEJS_APP_POD
+```
+
+```bash
+minikube service nodejs-app-service
 ```
