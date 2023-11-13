@@ -68,7 +68,7 @@ jobs:
     environment:
       name: "Development"
     env:
-      AZURE_WEBAPP_NAME: user_api # set this to your application's name
+      AZURE_WEBAPP_NAME: userapi-tristan-apolline # set this to your application's name
       AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
 
     steps:
