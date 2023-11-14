@@ -33,15 +33,6 @@ spec:
       labels:
         app: nodejs-app
     spec:
-      initContainers:
-        - name: wait-for-redis
-          image: busybox:1.31
-          command:
-            [
-              "sh",
-              "-c",
-              "until nslookup redis-service; do echo waiting for Redis; sleep 2; done",
-            ]
       containers:
         - name: nodejs-app
           image: tristanqtn/userapi-devops:latest

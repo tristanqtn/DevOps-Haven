@@ -82,9 +82,9 @@ docker build -t userapi .
 ```
 
 ```
-docker tag userapi tristanqtn/userapi-devops
+docker tag userapi tristanqtn/userapi-devops:latest
 docker login
-docker push tristanqtn/userapi-devops
+docker push tristanqtn/userapi-devops:latest
 ```
 
 Run the container, pay attention that this container requires a REDIS DB to work well. Thus make sure another container is hosting a REDIS DB with an open port on 6379 or a redis installed and running on the device hosting the container.

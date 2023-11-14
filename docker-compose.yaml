@@ -7,7 +7,7 @@ services:
       - "6379:6379"
   userapi:
     container_name: nodejs-webapp
-    build: ./userapi
+    image: tristanqtn/userapi-devops:latest
     ports:
       - "5000:3000"
     environment:

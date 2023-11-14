@@ -1,6 +1,7 @@
 const express = require("express");
 const userRouter = require("./routes/user");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 let options = {
   swaggerDefinition: {
@@ -38,7 +39,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
 
 app.use("/user", userRouter);
 
