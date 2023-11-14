@@ -119,3 +119,10 @@ kubectl logs $NAME_OF_NODEJS_APP_POD
 ```bash
 minikube service nodejs-app-service
 ```
+
+```bash
+kubectl delete deployment redis-deployment
+kubectl delete deployment nodejs-app-deployment
+kubectl delete service nodejs-app-service
+kubectl delete service redis-service
+```
