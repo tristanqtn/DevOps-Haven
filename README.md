@@ -67,6 +67,12 @@ npm run test
 A Swagger generator has been added to the API. The API description is available at the following address:
 http://localhost:3000/api-docs
 
+## Infrastructure as a Code
+
+```bash
+vagrant up
+```
+
 ## Docker
 
 Browse to the `./userapi` folder.
@@ -107,6 +113,9 @@ minikube status
 ```
 
 ```bash
+kubectl apply -f redis-pv.yaml
+kubectl apply -f redis-pvc.yaml
+
 kubectl apply -f service.yaml
 kubectl apply -f deployment.yaml
 ```

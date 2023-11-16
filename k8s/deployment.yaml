@@ -15,8 +15,15 @@ spec:
       containers:
         - name: redis
           image: redis:latest
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
           ports:
             - containerPort: 6379
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: redis-pvc
 
 ---
 apiVersion: apps/v1
