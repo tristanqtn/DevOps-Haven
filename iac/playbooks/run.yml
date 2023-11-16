@@ -1,0 +1,10 @@
+- hosts: nodeapp_server
+  # Run commands as root
+  become: true
+  # Roles to be executed on these hosts
+  roles:
+    - role: nodeapp/install
+      tags: install
+
+    - role: nodeapp/healthchecks
+      tags: integrity
