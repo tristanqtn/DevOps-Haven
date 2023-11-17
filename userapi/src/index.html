@@ -24,11 +24,13 @@
         <tr>
           <th>Method</th>
           <th>Path</th>
+          <th>Parameter</th>
           <th>Usage</th>
         </tr>
         <tr>
           <td>POST</td>
           <td>/user/</td>
+          <td>none</td>
           <td>
             use this method on given path to add a new user to the REDIS DB. In
             the post request send a JSON body containing following information:
@@ -38,6 +40,7 @@
         <tr>
           <td>GET</td>
           <td>/user/:username</td>
+          <td>username</td>
           <td>
             use this method on given path to retrieve a specific user (giving
             his username in URL) from the REDIS DB.
@@ -46,6 +49,8 @@
         <tr>
           <td>DELETE</td>
           <td>/user/:username</td>
+          <td>username</td>
+
           <td>
             use this method on given path to delete a specific user (giving his
             username in URL ) from the REDIS DB.
@@ -54,6 +59,7 @@
         <tr>
           <td>GET</td>
           <td>/user/keys/</td>
+          <td>none</td>
           <td>
             use this method on given path to retrieve all keys present in the
             REDIS DB.
@@ -62,6 +68,7 @@
         <tr>
           <td>GET</td>
           <td>/api-docs/</td>
+          <td>none</td>
           <td>obtain complete documentation of the API</td>
         </tr>
       </table>
@@ -69,10 +76,21 @@
       <br />
       <p>
         <strong>IMPORTANT</strong>: This application requires a REDIS DB to work
-        perfectly. If you are using this application on AZURE or in a Docker
-        container not linked with a REDIS container, API methods won't work for
-        you.
+        perfectly. If you are using this application on AZURE or in a single
+        Docker container not linked with a REDIS container, API methods won't
+        work for you.
       </p>
+      <br />
+      <div>
+        <p>
+          <strong>LINKS: </strong>except for the POST: /user/ endpoint other API
+          endpoints require at least one database entry to be used.
+        </p>
+        <ul>
+          <li><a href="/api-docs">API Docs</a></li>
+          <li><a href="/user/keys">Keys endpoint</a></li>
+        </ul>
+      </div>
     </div>
   </body>
 </html>

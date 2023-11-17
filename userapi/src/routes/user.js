@@ -15,7 +15,7 @@ userRouter
    *    lastname: "querton"
    * }
    * @examples {json} "{"username":"sergkudinov","firstname":"sergei","lastname":"kudinov"}"
-   * @returns {object} 201 succes - User has been added to the REDIS db
+   * @returns {object} 200 succes - User has been added to the REDIS db
    * @returns {Error}  400 error - User couldn't be added to REDIS db
    */
   .post("/", (req, resp) => {
@@ -32,14 +32,14 @@ userRouter
         status: "success",
         msg: res,
       };
-      resp.status(201).json(respObj);
+      resp.status(200).json(respObj);
     });
   })
   /**
    * This function handles GET requests for the USER API and returns all keys stored in Redis
    * @route GET /user/keys
    * @group USER - Methods for the user API
-   * @returns {object} 201 succes - Keys has been found in the DB
+   * @returns {object} 200 succes - Keys has been found in the DB
    * Sends back an array of keys
    * ["key1","key2","key3", ...]
    */
@@ -65,7 +65,7 @@ userRouter
    * @route GET /user/:username
    * @group USER - Methods for the user API
    * @param {string} username.query.required - username
-   * @returns {object} 201 succes - User has been found in the REDIS db
+   * @returns {object} 200 succes - User has been found in the REDIS db
    * Sends back a json user object
    * user: {
    *    username: "tristanqtn",
@@ -98,7 +98,7 @@ userRouter
    * @route DELETE /user/:username
    * @group USER - Methods for the user API
    * @param {string} username.query.required - username
-   * @returns {object} 201 succes - User has been found in the REDIS db and deleted
+   * @returns {object} 200 succes - User has been found in the REDIS db and deleted
    * @returns {Error}  400 error - User couldn't be found in REDIS db
    */
   .delete("/:username", (req, resp, next) => {

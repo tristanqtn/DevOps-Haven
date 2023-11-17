@@ -12,20 +12,28 @@
 4. Add a swagger generator for user API
 5. Create Dockerfile for publishing Docker image of userapi
 
-### Changed
-
-### Fixed
-
 ## v1.0.1
 
 1. Create `docker-compose.yml` to orchestrate the userapi with a REDIS container
-1. Create `.dockerignore` to prevent copying useless files in container
-1. Create `script.sh` that will be run on every userapi container startup to check health of the container and environnement with tests and then will start the application
+2. Create `.dockerignore` to prevent copying useless files in container
+3. Create `script.sh` that will be run on every userapi container startup to check health of the container and environnement with tests and then will start the application
 
 ### Changed
 
-2. Refactor repo architecture
+1. Refactor repo architecture
 
 ### Fixed
 
-3. Dockerfile error on container startup
+1. Dockerfile error on container startup
+
+## v1.0.2
+
+### Changed
+
+1. Binded port of user API in docker compose to match 3000
+2. Improve welcome page of user API
+
+### Fixed
+
+1. Swagger API Docs complete API methods description
+2. Remove environnement testing on container startup causing errors
