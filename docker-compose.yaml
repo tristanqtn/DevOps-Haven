@@ -9,7 +9,7 @@ services:
     container_name: nodejs-webapp
     image: tristanqtn/userapi-devops:latest
     ports:
-      - "5000:3000"
+      - "3000:3000"
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
