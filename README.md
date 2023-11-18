@@ -99,6 +99,12 @@ Run the container, pay attention that this container requires a REDIS DB to work
 docker run -p 3000:3000 -d userapi
 ```
 
+## CI/CD 
+
+Using github actions we have created a CI/CD pipeline. This pipeline is running on every push or accepted pull request. This pipeline is made out of two jobs. One ensures the Continuous Integration part and the other the Continuous Deployment. We could have perform those two jobs within a single job but it's part of the best practices to at least split the integration and the deployment.
+
+[App running in Azure][https://userapi-tristan-apolline.azurewebsites.net/]
+
 ## Docker Compose
 
 ```bash
