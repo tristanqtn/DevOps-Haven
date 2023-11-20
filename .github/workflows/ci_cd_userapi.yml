@@ -84,7 +84,7 @@ jobs:
           context: ./userapi
           file: ./userapi/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: "tristanqtn/userapi-devops:latest"
           labels: ${{ steps.meta.outputs.labels }}
           
   deploy:
