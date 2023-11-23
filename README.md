@@ -4,22 +4,22 @@
 
 | Subject                                                         | Code | DONE |
 | :-------------------------------------------------------------- | :--: | :--: |
-| Enriched web application with automated tests                   | APP  | -[x] |
-| Continuous Integration and Continuous Delivery (and Deployment) | CICD | -[x] |
-| Containerisation with Docker                                    |  D   | -[x] |
-| Orchestration with Docker Compose                               |  DC  | -[x] |
-| Orchestration with Kubernetes                                   | KUB  | -[x] |
-| Service mesh using Istio                                        | IST  | -[ ] |
-| Infrastructure as code using Ansible                            | IAC  | -[x] |
-| Monitoring                                                      | MON  | -[ ] |
-| Accurate project documentation in README.md file                | DOC  | -[x] |
+| Enriched web application with automated tests                   | APP  |  ✔   |
+| Continuous Integration and Continuous Delivery (and Deployment) | CICD |  ✔   |
+| Containerisation with Docker                                    |  D   |  ✔   |
+| Orchestration with Docker Compose                               |  DC  |  ✔   |
+| Orchestration with Kubernetes                                   | KUB  |  ✔   |
+| Service mesh using Istio                                        | IST  |      |
+| Infrastructure as code using Ansible                            | IAC  |  ✔   |
+| Monitoring                                                      | MON  |      |
+| Accurate project documentation in README.md file                | DOC  |  ✔   |
 
-| Bonuses                                                                   |      |
-| :------------------------------------------------------------------------ | :--: |
-| CI job for automated build and publish to DockerHub of the USER API image | -[x] |
-| Implementation of new API methods (Update, Delete, Get all keys)          | -[x] |
-| Improved tests and new tests for every new API method                     | -[x] |
-| API documentation using Swagger UI                                        | -[x] |
+| Bonuses                                                                   |     |
+| :------------------------------------------------------------------------ | :-: |
+| CI job for automated build and publish to DockerHub of the USER API image |  ✔  |
+| Implementation of new API methods (Update, Delete, Get all keys)          |  ✔  |
+| Improved tests and new tests for every new API method                     |  ✔  |
+| API documentation using Swagger UI                                        |  ✔  |
 
 # Summary
 
@@ -50,6 +50,8 @@
 # USER API
 
 It is a basic NodeJS web application exposing REST API that creates and stores user parameters in [Redis database](https://redis.io/). This application always the USER to perform CRUD operations.
+
+The source code of the application is available at [Source Code](./userapi/src/)
 
 ## Installation
 
@@ -92,7 +94,19 @@ Start a web server: in the `./userapi` folder run the following command to perfo
 npm start
 ```
 
-It will start a web server available in your browser at `http://localhost:3000`. Now the application is running on your device and you should be able to access the application home page at [USER API - home](http://localhost:3000). This home page explains you how to use the whole application.
+For dev mode:
+
+```bash
+npm run dev
+```
+
+It will start a web server available in your browser at `http://localhost:3000`.
+
+![startup_app](./images/start.png)
+
+Now the application is running on your device and you should be able to access the application home page at [USER API - home](http://localhost:3000). This home page explains you how to use the whole application.
+
+![homepage_app](./images/home_page.png)
 
 Here's a list of operations available using the REST API. For API testing we strongly recommend to use [Postman](https://www.postman.com/).
 
@@ -224,47 +238,53 @@ This application has been covered with tests. These tests will be useful for cre
 npm run test
 ```
 
+The code of the test scripts is available at [Tests](./userapi/test/)
+
 Here's a list of all test that will be performed:
 
 ```
   Configure
-    ✔ load default json configuration file
-    ✔ load custom configuration
+    - load default json configuration file
+    - load custom configuration
 
   Redis
-    ✔ should connect to Redis
+    - should connect to Redis
 
   User
     Create
-      ✔ create a new user
-      ✔ passing wrong user parameters
-      ✔ avoid creating an existing user
+      - create a new user
+      - passing wrong user parameters
+      - avoid creating an existing user
     Get
-      ✔ get a user by username
-      ✔ can not get a user when it does not exist
+      - get a user by username
+      - can not get a user when it does not exist
     Get keys
-      ✔ get the key of an existing user
+      - get the key of an existing user
     Delete
-      ✔ delete an existing user
-      ✔ prevent deleting a non-existing user
+      - delete an existing user
+      - prevent deleting a non-existing user
 
   User REST API
     POST /user
-      ✔ create a new user (52ms)
-      ✔ pass wrong parameters
+      - create a new user
+      - pass wrong parameters
     GET /user
-      ✔ get an existing user
-      ✔ can not get a user when it does not exist
+      - get an existing user
+      - can not get a user when it does not exist
     GET /user/keys
-      ✔ get the key of an existing user
+      - get the key of an existing user
     Delete /user
-      ✔ delete an existing user
-      ✔ can not delete a user when it does not exist
+      - delete an existing user
+      - can not delete a user when it does not exist
     PUT /user
-      ✔ update an existing
-      ✔ pass wrong parameters
-      ✔ can not delete a user when it does not exist
+      - update an existing
+      - pass wrong parameters
+      - can not delete a user when it does not exist
 ```
+
+The expected output of the execution of all test script is the following screenshot:
+
+![All tests succes](./images/tests.png)
 
 ## Documentation
 
@@ -276,17 +296,29 @@ Using GitHub actions we have created a CI/CD pipeline. This pipeline is running 
 
 The code of this CI/CD pipeline is available at [CI/CD](./.github/workflows/ci_cd_userapi.yml)
 
+CI/CD Pipelines are not executed locally but on a GitHub server similar to a production environment. Thus, for each job we need to tell the server which dependencies are required. We run those pipelines on a clean remote server because we want to reproduce a production environment.
+
 ## CI
 
-CI stands for Continuous Integration. This job is responsible of making sur that the added code (pushed or merged) is integrating correctly with the legacy code. Verification of correct integration is carried out by some tests coded by the developer. If all these tests pass without error, it means that the new code integrates well with the old one.
+CI stands for Continuous Integration. This job is responsible of making sur that the added code (pushed or merged) is integrating correctly with the legacy code. Verification of correct integration is carried out by some tests coded by the developer. Before run the test the pipeline installs on the container running the job the needed dependencies: Redis and NodeJS. If all these tests pass without error, it means that the new code integrates well with the old one.
+
+![CI steps for running tests ](./images/ci_cd_steps_tests.png)
 
 BONUS: If these tests pass correctly we can move on to the second step of the integration which is in our case building and publishing the Docker image. It can be verify boring and repetitive to do it by hand each time. Thus we've create a second job in the GitHub Action that automatically builds and pushes the image to DockerHub. Thanks to this job we always know that the version available on DockerHub is always the latest. This job depends on the succes of the testing job because we don't want to build and publish a buggy application that didn't pass all test.
+
+![CI steps for building and publishing Docker image](./images/ci_cd_steps_docker.png)
 
 ## CD
 
 The last job of this pipeline is to deploy the application to Azure. To do so we've created a Ressource Group in Azure that hosts a Azure Web App Service. And using the `publishProfile` of this Azure ressource we're able to connect GitHub to Azure and automate the deployment. This job depends on the succes of the testing job because we don't want to deploy a buggy application that didn't pass all test.
 
 [App running in Azure](https://userapi-tristan-apolline.azurewebsites.net/)
+
+![CI steps for Azure deployment](./images/ci_cd_steps_azure.png)
+
+When all of these 3 jobs are finished the new version of the application has been deployed and the latest image pushed to DockerHub. We end up with the following working tree:
+
+![CI/CD working tree](./images/ci_cd_working_tree.png)
 
 # Infrastructure as a Code
 
