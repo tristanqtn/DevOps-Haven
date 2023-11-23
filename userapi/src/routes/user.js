@@ -14,12 +14,43 @@ userRouter
    *    firstname: "tristan",
    *    lastname: "querton"
    * }
-   * @examples {json} "{"username":"sergkudinov","firstname":"sergei","lastname":"kudinov"}"
+   * @examples {json} "{"username":"tristanqtn","firstname":"tristan","lastname":"querton"}"
    * @returns {object} 200 succes - User has been added to the REDIS db
    * @returns {Error}  400 error - User couldn't be added to REDIS db
    */
   .post("/", (req, resp) => {
     userController.create(req.body, (err, res) => {
+      let respObj;
+      if (err) {
+        respObj = {
+          status: "error",
+          msg: err.message,
+        };
+        return resp.status(400).json(respObj);
+      }
+      respObj = {
+        status: "success",
+        msg: res,
+      };
+      resp.status(200).json(respObj);
+    });
+  })
+  /**
+   * This function handles PUT requests for the USER API.
+   * @route PUT /user/updates
+   * @group USER - Methods for the user API
+   * @param {string} user.body.required - JSON user
+   * user: {
+   *    username: "tristanqtn",
+   *    firstname: "tristan",
+   *    lastname: "querton"
+   * }
+   * @examples {json} "{"username":"tristanqtn","firstname":"tristan","lastname":"querton"}"
+   * @returns {object} 200 succes - User has been updated to the REDIS db
+   * @returns {Error}  400 error - User couldn't be updated to REDIS db
+   */
+  .put("/updates", (req, resp) => {
+    userController.update(req.body, (err, res) => {
       let respObj;
       if (err) {
         respObj = {
