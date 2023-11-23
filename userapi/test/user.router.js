@@ -138,7 +138,7 @@ describe("User REST API", () => {
       };
       // Create a user
       userController.create(user, () => {
-        // Get the user
+        // Delete the user
         chai
           .request(app)
           .delete("/user/" + user.username)
@@ -153,6 +153,90 @@ describe("User REST API", () => {
             throw err;
           });
       });
+    });
+    it("can not delete a user when it does not exist", (done) => {
+      // Delete the user
+      chai
+        .request(app)
+        .delete("/user/invalid")
+        .then((res) => {
+          chai.expect(res).to.have.status(400);
+          chai.expect(res.body.status).to.equal("error");
+          chai.expect(res).to.be.json;
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+  });
+  describe("PUT /user", () => {
+    it("update an existing", (done) => {
+      const user = {
+        username: "tristanqtn",
+        firstname: "tristan",
+        lastname: "querton",
+      };
+      const update = {
+        username: "tristanqtn",
+        firstname: "update",
+        lastname: "update",
+      };
+      userController.create(user, () => {
+        chai
+          .request(app)
+          .put("/user/updates")
+          .send(update)
+          .then((res) => {
+            chai.expect(res).to.have.status(200);
+            chai.expect(res.body.status).to.equal("success");
+            chai.expect(res).to.be.json;
+            done();
+          })
+          .catch((err) => {
+            throw err;
+          });
+      });
+    });
+
+    it("pass wrong parameters", (done) => {
+      const user = {
+        firstname: "tristan",
+        lastname: "querton",
+      };
+      chai
+        .request(app)
+        .put("/user/updates")
+        .send(user)
+        .then((res) => {
+          chai.expect(res).to.have.status(400);
+          chai.expect(res.body.status).to.equal("error");
+          chai.expect(res).to.be.json;
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+    it("can not delete a user when it does not exist", (done) => {
+      const unknown = {
+        username: "unknown",
+        firstname: "unknown",
+        lastname: "unknown",
+      };
+      chai
+        .request(app)
+        .put("/user/updates")
+        .send(unknown)
+        .then((res) => {
+          chai.expect(res).to.have.status(400);
+          chai.expect(res.body.status).to.equal("error");
+          chai.expect(res).to.be.json;
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
     });
   });
 });

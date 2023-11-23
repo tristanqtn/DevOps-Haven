@@ -29,12 +29,21 @@
         </tr>
         <tr>
           <td>POST</td>
-          <td>/user/</td>
+          <td>/user</td>
           <td>none</td>
           <td>
             use this method on given path to add a new user to the REDIS DB. In
             the post request send a JSON body containing following information:
             {"username" = "", "firstname" = "", "lastname"=""}
+          </td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>/user/updates</td>
+          <td>none</td>
+          <td>
+            update the information of an existing user. Send the following json
+            body: {"username" = "", "firstname" = "", "lastname"=""}
           </td>
         </tr>
         <tr>
@@ -58,7 +67,7 @@
         </tr>
         <tr>
           <td>GET</td>
-          <td>/user/keys/</td>
+          <td>/user/keys</td>
           <td>none</td>
           <td>
             use this method on given path to retrieve all keys present in the
@@ -67,7 +76,7 @@
         </tr>
         <tr>
           <td>GET</td>
-          <td>/api-docs/</td>
+          <td>/api-docs</td>
           <td>none</td>
           <td>obtain complete documentation of the API</td>
         </tr>
