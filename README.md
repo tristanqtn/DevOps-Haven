@@ -1,5 +1,7 @@
 # DevOps Project
 
+This repo has been used by Tristan and Apolline for developping the DevOps project but also to do all the [labs](./labs/README.md). This [README.md](./README.md) explains everything you need to know to understand our project, to try it and to reproduce it at home. For the labs, navigate to each lab where you'll find our lab reports.
+
 # State of the project
 
 | Subject                                                         | Code | DONE |
@@ -34,7 +36,8 @@
    1. [CD](#cd)
 3. [Infrastructure as a Code](#infrastructure-as-a-code)
    1. [Allocating VM](#allocating-vm)
-   2. [Provisionning VM with Ansible](#provisionning-vm-with-ansible)
+   2. [provisioning VM with Ansible](#provisioning-vm-with-ansible)
+   3. [Running app in Vagrant VM](#running-app-in-vagrant-vm)
 4. [Docker Image](#docker-image)
    1. [Building the image](#building-the-image)
    2. [Publishing the image](#publishing-the-image)
@@ -113,7 +116,7 @@ Now the application is running on your device and you should be able to access t
 
 Here's a list of operations available using the REST API. For API testing we strongly recommend to use [Postman](https://www.postman.com/).
 
-1. Create a user
+1. **Create a user**
 
 This method will allow you to insert a new user in the Redis DB. Send a POST (REST protocol) request using the following command:
 
@@ -140,7 +143,7 @@ The API should respond you with the following `json` message:
 { "status": "success", "msg": "OK" }
 ```
 
-2. Retrieve the information of a specific user
+2. **Retrieve the information of a specific user**
 
 This method will allow you to retrieve the `firstname` and `lastname` of a user inserted in Redis using its `username`. To do so send a GET request to the API at `http://localhost:3000/user/:username` where `username` is the username of the user you want to get the information.
 
@@ -164,7 +167,7 @@ The API should respond you with the following `json` message:
 }
 ```
 
-3. Retrieve all keys in the Redis database
+3. **Retrieve all keys in the Redis database**
 
 This method will allow you to retrieve all keys stored in Redis. To do so send a GET request to the API at `http://localhost:3000/user/keys`.
 
@@ -185,7 +188,7 @@ The API should respond you with the following `json` message:
 }
 ```
 
-4. Update the information of a specific user
+4. **Update the information of a specific user**
 
 This method will allow you to update the information of an already inserted uder the Redis DB. Make sure to use the `username` of a user existing in the DB. Send a PUT (REST protocol) request using the following command:
 
@@ -212,7 +215,7 @@ The API should respond you with the following `json` message:
 { "status": "success", "msg": "OK" }
 ```
 
-5. Delete a specific user
+5. **Delete a specific user**
 
 This method will allow you to delete a user inserted in Redis using its `username`. To do so send a DELETE request to the API at `http://localhost:3000/user/:username` where `username` is the username of the user you want to delete.
 
@@ -233,7 +236,7 @@ The API should respond you with the following `json` message:
 }
 ```
 
-6. Health Endpoint
+6. **Health Endpoint**
 
 An API endpoint has been created to send the current health state of the application. Send a GET request to the `http://localhost:3000/health` (or curl it with `curl http://localhost:3000/health`) and the API should respond you with a message similar to the following one:
 
@@ -333,17 +336,100 @@ When all of these 3 jobs are finished the new version of the application has bee
 
 # Infrastructure as a Code
 
+At this step we will be deploying our application inside a VM dedicated to run the app. To create the VM we will be using [Vagrant](https://www.vagrantup.com/) and for provisioning and configuration of this VM we will be using [Ansible](https://www.ansible.com/). Those two will do the definition of a VM, copying necessary files, and executing Ansible playbooks and shell scripts to set up the desired environment.
+
 ## Allocating VM
+
+This part is refering to the [Vagrantfile](./iac/Vagrantfile).
+
+1. **VM Definition:**
+
+A VM named "nodeapp_server" is defined using the CentOS 7 box.
+Port forwarding is set up to map port 3000 on the guest VM to port 3000 on the host machine.
+The VM is configured with specific resources (memory and CPUs) for both VirtualBox and VMware providers.
+
+2. **File Provisioning:**
+
+The local ../userapi directory is copied to the VM's $HOME/nodeapp directory. At this step we are installing our NodeJS app code inside the VM.
+
+3. **Ansible Provisioning:**
+
+Ansible is used for provisioning with the local playbook playbooks/run.yml.
+Only the roles with the tags "install" and "integrity" will be executed.
+
+4. **Shell Provisioning:**
+
+A shell script [app_launcher.sh](./iac/app_launcher.sh) is executed on every provision. This script performs once again integrity tests and then open port 3000 of the VM to external connection an finally starts our NodeJS application.
+
+## Provisioning VM with Ansible
+
+We need to configure this VM in order to host the application on it, this configuration process will be done by Ansible.
+
+### Installation
+
+The installation is ensured by Ansible, to do so we provide Ansible with a [playbook](./iac/playbooks/roles/nodeapp/install/tasks/main.yml) that explains all required steps to be performed. Here's an explanation of those steps. At the end of this play book the VM is completly configured to host the app (Redis is installed and runnig, firewalls are opened, language runtime is installed, app launcher is ready, ...).
+
+1. **Install Required Packages:**
+
+   - Uses the `yum` module to ensure that various packages (e.g., `curl`, `redis`, `nodejs`, etc.) are installed and up-to-date.
+
+2. **Enable and Start SSH:**
+
+   - Ensures that the SSH service (`sshd`) is started and enabled for automatic startup.
+
+3. **Enable HTTP+HTTPS Access:**
+
+   - Configures firewalld to enable permanent access for HTTP and HTTPS services.
+
+4. **Reload Firewalld:**
+
+   - Reloads the firewalld service to apply the new configuration.
+
+5. **Starting REDIS:**
+
+   - Uses the `command` module to start the Redis service using `systemctl`.
+
+6. **Install Node Packages:**
+
+   - Uses the `command` module to install Node.js packages for the specified directory (`/home/vagrant/nodeapp/`) using npm.
+
+7. **Changing Permissions for App Launcher:**
+   - Changes the permissions of the `app_launcher.sh` script to make it executable.
+
+This Ansible playbook automates the installation and configuration of necessary packages and services for a system running a Node.js application. It also includes tasks for firewall configuration, service management, and script execution. The playbook ensures that the system is properly configured to run our application.
+
+### Integrity tests
+
+Health checks are performed by another [playbook](./iac/playbooks/roles/nodeapp/healthchecks/tasks/main.yml). This one ensures that the environment is ready to host the application.
+
+**Running Integrity Tests:**
+
+- Uses the `command` module to execute a health check command.
+- Runs the `npm run test` command for the Node.js application located in `/home/vagrant/nodeapp/`. And checks that all tests are passed correctly.
+
+This Ansible task is responsible for triggering the integrity tests for the Node.js application, providing a mechanism to verify that the application is in a healthy and expected state. The health check is essential for ensuring the reliability and correctness of the deployed application.
+
+## Running app in Vagrant VM
+
+To run this NodeJS app in Vagrant VM make sure Vagrant and VirtualBox are installed and configured.
+
+Then, browse to the `./iac` folder.
+
+```bash
+cd iac
+```
+
+Perform the following command in the `./iac` folder to start the VM provisioning, the NodeJS app will start automatically if the provisioning step has been done correctly.
 
 ```bash
 vagrant up
 ```
 
+To destroy the VM, first stop the NodeJS application and run this command:
+
 ```bash
 vagrant destroy
 ```
-
-## Provisionning VM with Ansible
 
 # Docker Image
 
