@@ -14,6 +14,8 @@
 
 ## v1.0.1
 
+### Added
+
 1. Create `docker-compose.yml` to orchestrate the userapi with a REDIS container
 2. Create `.dockerignore` to prevent copying useless files in container
 3. Create `script.sh` that will be run on every userapi container startup to check health of the container and environnement with tests and then will start the application
@@ -37,3 +39,15 @@
 
 1. Swagger API Docs complete API methods description
 2. Remove environnement testing on container startup causing errors
+
+## v1.0.3
+
+### Added
+
+1. API health endpoint
+2. PUT methods
+3. Tests for new PUT method and API health endpoint
+
+### Changed
+
+1. Improve welcome page of user API

@@ -1,5 +1,6 @@
 const express = require("express");
 const userRouter = require("./routes/user");
+const healthRouter = require("./routes/health");
 const bodyParser = require("body-parser");
 const path = require("path");
 
@@ -41,6 +42,7 @@ app.use(bodyParser.json());
 
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
 
+app.use("/health", healthRouter);
 app.use("/user", userRouter);
 
 const server = app.listen(port, (err) => {
