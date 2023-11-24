@@ -20,6 +20,7 @@
 | Implementation of new API methods (Update, Delete, Get all keys)          |  ✔  |
 | Improved tests and new tests for every new API method                     |  ✔  |
 | API documentation using Swagger UI                                        |  ✔  |
+| API health endpoint                                                       |  ✔  |
 
 # Summary
 
@@ -38,11 +39,13 @@
    1. [Building the image](#building-the-image)
    2. [Publishing the image](#publishing-the-image)
    3. [Automation pipeline](#automation-pipeline)
+   4. [Running the image](#running-the-image)
 5. [Docker Compose](#docker-compose)
 6. [Orchestration with K8S](#orchestration-with-k8s)
-   1. [Pods and Deployment](#pods-and-deployement)
+   1. [PV and PVC](#pv-and-pvc)
    2. [Services](#services)
-   3. [PV and PVC](#pv-and-pvc)
+   3. [Pods and Deployment](#pods-and-deployement)
+   4. [Running app in K8S](#running-app-in-k8s)
 7. [Bonuses](#bonuses)
 8. [Useful Links](#useful-links)
 9. [Authors](#authors)
@@ -230,6 +233,14 @@ The API should respond you with the following `json` message:
 }
 ```
 
+6. Health Endpoint
+
+An API endpoint has been created to send the current health state of the application. Send a GET request to the `http://localhost:3000/health` (or curl it with `curl http://localhost:3000/health`) and the API should respond you with a message similar to the following one:
+
+```json
+{ "uptime": 389.8366598, "status": "OK", "timestamp": 1700817327148 }
+```
+
 ## Testing
 
 This application has been covered with tests. These tests will be useful for creating CI/CD pipelines. They are also useful for checking the integrity of the application after code has been added or modifications have been made. To run these tests make sure Redis is running with the command `redis-cli PING` and Redis should answer with `PONG`. Then run the following command that will automatically start the server and then perform the suite of tests.
@@ -336,11 +347,11 @@ vagrant destroy
 
 # Docker Image
 
-Run the container, pay attention that this container requires a REDIS DB to work well. Thus make sure another container is hosting a REDIS DB with an open port on 6379 or a redis installed and running on the device hosting the container.
+In order to make the application usable in environments such as Docker Compose or Kubernetes, we first need to create the docker image og the application. To do so we've created the [DockerFile](./userapi/Dockerfile) which is responsible for the creation of the image.
 
-```bash
-docker run -p 3000:3000 -d userapi
-```
+Note that for this image it's useless to upload folders and files such has `./test`, `eslintrc.json`, `DockerFile` itself, ... Thus we've added a [.dockerignore](./userapi/.dockerignore) to tell the DockerFile which files and folders aren't required in the image.
+
+Before performing the following instructions make sure Docker is installed and running on your device.
 
 ## Building the image
 
@@ -350,7 +361,7 @@ Browse to the `./userapi` folder.
 cd userapi
 ```
 
-Build the image.
+Build the image with this command:
 
 ```bash
 docker build -t userapi .
@@ -358,47 +369,120 @@ docker build -t userapi .
 
 ## Publishing the image
 
-```
-docker tag userapi tristanqtn/userapi-devops:latest
+Before publishing the image make sure you have a [DockerHub](https://hub.docker.com/) account.
+
+```bash
+docker tag userapi $YOUR_USERNAME/userapi-devops:latest
 docker login
-docker push tristanqtn/userapi-devops:latest
+docker push $YOUR_USERNAME/userapi-devops:latest
 ```
 
 ## Automation pipeline
 
+As explained [above](#ci), we've created a bonus CI/CD pipeline job to automate all the steps involved in compiling and publishing the docker image. Now we don't need to build and publish each new version of the USER API beacause it will be done automatically for us on each merge or push to main branch.
+
+## Running the image
+
+Run the container, pay attention that this container requires a REDIS DB to work well. Thus make sure another container is hosting a REDIS DB with an open port on 6379 or a Redis instance is installed and running on the device hosting the container. In order to access the application a port binding is required as follows.
+
+```bash
+docker run -p 3000:3000 -d userapi
+```
+
 # Docker Compose
+
+Docker Compose is a powerful tool that simplifies the deployment of multi-container applications. To create a docker compose we have to create a [docker-compose.yaml](./docker-compose.yaml) file.
+
+In this docker compose, two services are defined: `redis` and `userapi`. The redis service is based on the latest Redis image, exposing its `port 6379` (native port of Redis). This container hosts a Redis instance that will be used by the other container hosting the application. The userapi service, encapsulating a Node.js web application, relies on a custom image `tristanqtn/userapi-devops:latest` (image that we built and published previously) and exposes its functionality on `port 3000`.
+
+Importantly, the userapi service specifies dependencies using the `depends_on` directive, ensuring that the Redis service is fully initialized before the Node.js application starts. Additionally, environmental variables `REDIS_HOST` and `REDIS_PORT` are set, establishing communication between the services.
+
+Before starting the Docker Compose, make sure Docker is running on your device and the `docker-compose` extension is installed too. Then run the following command:
 
 ```bash
 docker compose up
 ```
 
+A cluster of two containers should now be running on your device. Let them time to start and when you see the following line in your command prompt: `nodejs-webapp  | Server listening the port 3000` you can start using the [application](http://localhost:3000).
+
+To stop the Docker Compose cluster you can either use the command `CTRL + C` or the following Docker command (will delete the whole cluster):
+
 ```bash
 docker compose down
 ```
 
+We didn't implement persistent volumes in the docker compose because we thought it would be more challenging to setup in the K8S environment, and thus funnier to do.
+
 # Orchestration with K8S
+
+[Kubernetes](https://kubernetes.io/) is an open-source container orchestration platform, and these configurations are part of its persistent storage system. Before reading and experimenting this part, make sure you understand those K8S terms: cluster, node, pod, deployments, services, PV and PVC.
+
+## PV and PVC
+
+These tools (Persistent Volume and Persistent Volume Claim) facilitate the dynamic provisioning and consumption of persistent storage in a Kubernetes cluster, ensuring data persistence for applications like Redis that require durable storage beyond the lifecycle of individual pods.
+
+### Persistent Volume
+
+This [YAML](./k8s/redis-pv.yaml) file defines a Kubernetes PersistentVolume (PV) named `redis-pv`. It specifies attributes such as storage capacity (1Gi), access modes (read-write-once), reclaim policy (Retain), and a host path on the underlying node where the volume is physically stored ("/mnt/data") here in the Minikube node.
+
+A K8S PV is represents physical storage resources in the cluster. But this storage need to be claim by a pod to be used, this will be the role of the PVC.
+
+### Persistent Volume Claim
+
+This [YAML](./k8s/redis-pvc.yaml) file defines a Kubernetes PersistentVolumeClaim (PVC) named `redis-pvc`. It specifies that the claim requires 1Gi of storage with a read-write-once access mode. A PVC is a request for storage that can be fulfilled by a PV. In this case, it is designed to bind to the previously defined `redis-pv` for storage.
+
+A K8S PVC is a request for storage by a user or a pod.
+
+## Services
+
+Service facilitate the seamless connectivity between different components of the application within the Kubernetes cluster and could be used to enable external access to a pod. In our case we'll define two services, one for expsoing the redis native port so that the redis pod can be exploited b the NodeJS app and another one responsible for exposing the running port of the NodeJS app to external access (outside of the node).
+
+This [redis-service](./k8s/service.yaml) defines a Kubernetes Service named `redis-service`. Services in Kubernetes enable communication between different sets of pods. This service is configured to route traffic to pods with the label app: redis based on the specified selector. It exposes the Redis pod on `port 6379` within the cluster.
+
+This [nodejs-app-service](./k8s/service.yaml) defines a Kubernetes Service named `nodejs-app-service`. Similar to `redis-service`, it facilitates communication between pods, but in this case, it selects pods with the label app: nodejs-app. It exposes the Node.js application to external traffic on `port 3000`.
+
+## Pods and Deployement
+
+Now that PV and PVC has been defined to enable data persistence, and that some services will be used to ensure inside and outside node connectivity between pods, we can finally deploy the application.
+
+This [deployment file](./k8s/deployment.yaml) enables the orchestrated deployment and scaling of the Redis and Node.js applications in a Kubernetes cluster. The applications are configured to communicate seamlessly and leverage persistent storage for data durability.
+
+This [redis-deployment](./k8s/deployment.yaml) defines a Kubernetes Deployment named `redis-deployment` for the Redis database. It ensures that one replica of the Redis pod is always running. The pod specification includes a Redis container, using the latest Redis image, and mounts a persistent volume `redis-storage` at the path `/data` for data persistence. The container exposes `port 6379`, and the volume is dynamically provisioned using the `redis-pvc` PersistentVolumeClaim.
+
+This [nodejs-app-deployment](./k8s/deployment.yaml) defines a Kubernetes Deployment named `nodejs-app-deployment` for the USER API application. It ensures that one replica of the Node.js pod is always running. The pod specification includes a Node.js container, using a our image, exposing `port 3000`. Environment variables `REDIS_HOST` and `REDIS_PORT` are set to establish communication with the Redis service `redis-service`, making it aware of the Redis pod's location.
+
+## Running app in K8S
+
+1. Make sure [Minikube](https://minikube.sigs.k8s.io/docs/start/) and [kubectl](https://kubernetes.io/docs/tasks/tools/) are installed on your device. Then start the minikube node and then check the status of it with the two commands:
 
 ```bash
 minikube start
 minikube status
 ```
 
+Then apply in the order those files: `redis-pv.yaml` => `redis-pvc.yaml` => `service.yaml` => `deployment.yaml`. This will deploy all needed tools and finally deploy the application.
+
 ```bash
 kubectl apply -f redis-pv.yaml
 kubectl apply -f redis-pvc.yaml
-
 kubectl apply -f service.yaml
 kubectl apply -f deployment.yaml
 ```
+
+Make sure everything is ok with the following commands. All pods should be running with no restarting loops. Access the logs of the NodeJS app pod to make sure that the application is healthy and running on `port 3000`.
 
 ```bash
 kubectl get pods
 kubectl logs $NAME_OF_NODEJS_APP_POD
 ```
 
+Since the app is running in a pod and the pode is inside a node you have to create a tunnel directly to the NodeJS app with this command (the command uses the service that open the NodeJS pod to outside connection on `port 3000` defined before):
+
 ```bash
 minikube service nodejs-app-service
 ```
+
+To delete the application and all deployments you can perform a clean exit with the following command or destroy the node with `minikube delete`:
 
 ```bash
 kubectl delete deployment redis-deployment
@@ -407,17 +491,12 @@ kubectl delete service nodejs-app-service
 kubectl delete service redis-service
 ```
 
-## Pods and Deployement
-
-## Services
-
-## PV and PVC
-
 # Bonuses
 
 Here's a list of all additional features we've added to our project:
 
 - CI job for automated build and publish to DockerHub of the USER API image
+- API health endpoint
 - Implementation of new API methods
   - Update the information of a user
   - Delete a user
