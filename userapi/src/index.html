@@ -19,7 +19,8 @@
         Here's a table reviewing all available API methods and the path assigned
         to these methods:
       </p>
-
+      <br />
+      <p>CRUD Operations</p>
       <table>
         <tr>
           <th>Method</th>
@@ -74,11 +75,28 @@
             REDIS DB.
           </td>
         </tr>
+      </table>
+      <br />
+      <p>Other Routes</p>
+      <br />
+      <table>
+        <tr>
+          <th>Method</th>
+          <th>Path</th>
+          <th>Parameter</th>
+          <th>Usage</th>
+        </tr>
         <tr>
           <td>GET</td>
           <td>/api-docs</td>
           <td>none</td>
           <td>obtain complete documentation of the API</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/health</td>
+          <td>none</td>
+          <td>obtain the health of the application</td>
         </tr>
       </table>
 
@@ -98,6 +116,7 @@
         <ul>
           <li><a href="/api-docs">API Docs</a></li>
           <li><a href="/user/keys">Keys endpoint</a></li>
+          <li><a href="/health">Health endpoint</a></li>
         </ul>
       </div>
     </div>
