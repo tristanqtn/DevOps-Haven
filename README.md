@@ -314,7 +314,7 @@ CI/CD Pipelines are not executed locally but on a GitHub server similar to a pro
 
 ## CI
 
-CI stands for Continuous Integration. This job is responsible of making sur that the added code (pushed or merged) is integrating correctly with the legacy code. Verification of correct integration is carried out by some tests coded by the developer. Before run the test the pipeline installs on the container running the job the needed dependencies: Redis and NodeJS. If all these tests pass without error, it means that the new code integrates well with the old one.
+CI stands for Continuous Integration. This job is responsible of making sur that the added code (pushed or merged) is integrating correctly with the legacy code. Verification of correct integration is carried out by some [tests](./userapi/test/) coded by the developer. Before run the test the pipeline installs on the container running the job the needed dependencies: Redis and NodeJS. If all these tests pass without error, it means that the new code integrates well with the old one.
 
 ![CI steps for running tests ](./images/ci_cd_steps_tests.png)
 
@@ -324,9 +324,15 @@ BONUS: If these tests pass correctly we can move on to the second step of the in
 
 ## CD
 
-The last job of this pipeline is to deploy the application to Azure. To do so we've created a Ressource Group in Azure that hosts a Azure Web App Service. And using the `publishProfile` of this Azure ressource we're able to connect GitHub to Azure and automate the deployment. This job depends on the succes of the testing job because we don't want to deploy a buggy application that didn't pass all test.
+The last job of this pipeline is to deploy the application to Azure. To do so we've created a Ressource Group in Azure that hosts a Azure Web App Service.
 
-[App running in Azure](https://userapi-tristan-apolline.azurewebsites.net/)
+![azure1](./images/azure1.png)
+
+![azure2](./images/azure2.png)
+
+And using the `publishProfile` of this Azure ressource we're able to connect GitHub to Azure and automate the deployment. This job depends on the succes of the testing job because we don't want to deploy a buggy application that didn't pass all test.
+
+[App running in Azure](https://userapi-tristan-apolline.azurewebsites.net/): **IMPORTANT**: This version of the userapi hasn't been connected on purpose to a Redis DB because that result in a publicly accessible DB which is a major security threat.
 
 ![CI steps for Azure deployment](./images/ci_cd_steps_azure.png)
 
@@ -425,6 +431,12 @@ Perform the following command in the `./iac` folder to start the VM provisioning
 vagrant up
 ```
 
+![vagrant1](./images/Screenshot%20from%202023-11-26%2014-23-15.png)
+
+![vagrant2](./images/Screenshot%20from%202023-11-26%2014-23-52.png)
+
+![vagrant3](./images/Screenshot%20from%202023-11-26%2014-30-16.png)
+
 To destroy the VM, first stop the NodeJS application and run this command:
 
 ```bash
@@ -450,8 +462,10 @@ cd userapi
 Build the image with this command:
 
 ```bash
-docker build -t userapi .
+docker build -t userapi-devops .
 ```
+
+![dockerbuild](./images/dockerbuild.png)
 
 ## Publishing the image
 
@@ -463,17 +477,35 @@ docker login
 docker push $YOUR_USERNAME/userapi-devops:latest
 ```
 
+The image is now available online. Thus you can perform the installation of this image on any compatible device without needing the source code.
+
+![dockerhub](./images/dockerhub.png)
+
 ## Automation pipeline
 
 As explained [above](#ci), we've created a bonus CI/CD pipeline job to automate all the steps involved in compiling and publishing the docker image. Now we don't need to build and publish each new version of the USER API beacause it will be done automatically for us on each merge or push to main branch.
+
+![cidocker](./images/ci_cd_steps_docker.png)
 
 ## Running the image
 
 Run the container, pay attention that this container requires a REDIS DB to work well. Thus make sure another container is hosting a REDIS DB with an open port on 6379 or a Redis instance is installed and running on the device hosting the container. In order to access the application a port binding is required as follows.
 
+Locally built image:
+
 ```bash
 docker run -p 3000:3000 -d userapi
 ```
+
+Image available on DockerHub:
+
+```bash
+docker run -p 3000:3000 -d tristanqtn/userapi-devops:latest
+```
+
+![dockerstandalone](./images/dockerstandalone.png)
+
+You can see on the screenshot above that the container is running. We've just created a Redis container to make sure that the USER API is running correctly. Those two are completly independent even though the API is using the Redis container.
 
 # Docker Compose
 
@@ -491,11 +523,15 @@ docker compose up
 
 A cluster of two containers should now be running on your device. Let them time to start and when you see the following line in your command prompt: `nodejs-webapp  | Server listening the port 3000` you can start using the [application](http://localhost:3000).
 
+![docker compose up](./images/docker_compose.png)
+
 To stop the Docker Compose cluster you can either use the command `CTRL + C` or the following Docker command (will delete the whole cluster):
 
 ```bash
 docker compose down
 ```
+
+![docker compose down](./images/docker_compose_down.png)
 
 We didn't implement persistent volumes in the docker compose because we thought it would be more challenging to setup in the K8S environment, and thus funnier to do.
 
@@ -546,6 +582,10 @@ minikube start
 minikube status
 ```
 
+![minikubestart](./images/minikubestart.png)
+
+![minikubestatus](./images/minikubestatus.png)
+
 Then apply in the order those files: `redis-pv.yaml` => `redis-pvc.yaml` => `service.yaml` => `deployment.yaml`. This will deploy all needed tools and finally deploy the application.
 
 ```bash
@@ -555,6 +595,8 @@ kubectl apply -f service.yaml
 kubectl apply -f deployment.yaml
 ```
 
+![k8sdeploy](./images/k8sdeploy.png)
+
 Make sure everything is ok with the following commands. All pods should be running with no restarting loops. Access the logs of the NodeJS app pod to make sure that the application is healthy and running on `port 3000`.
 
 ```bash
@@ -562,11 +604,18 @@ kubectl get pods
 kubectl logs $NAME_OF_NODEJS_APP_POD
 ```
 
+![k8sgetpods](./images/k8sgetpods.png)
+![k8slogs](./images/k8slogs.png)
+
 Since the app is running in a pod and the pode is inside a node you have to create a tunnel directly to the NodeJS app with this command (the command uses the service that open the NodeJS pod to outside connection on `port 3000` defined before):
 
 ```bash
 minikube service nodejs-app-service
 ```
+
+![minikubetunnel](./images/minikubetunnel.png)
+
+![homepage](./images/home_page.png)
 
 To delete the application and all deployments you can perform a clean exit with the following command or destroy the node with `minikube delete`:
 
@@ -576,6 +625,14 @@ kubectl delete deployment nodejs-app-deployment
 kubectl delete service nodejs-app-service
 kubectl delete service redis-service
 ```
+
+Deleting services, PV, PVC and deployments:
+
+![k8sdelete_deploy](./images/k8sdelete_deploy.png)
+
+Deleting minikube node directly:
+
+![minikubedelete](./images/minikubedelete.png)
 
 # Bonuses
 
@@ -591,6 +648,49 @@ Here's a list of all additional features we've added to our project:
 - API documentation using Swagger UI
 
 # Useful Links
+
+1. USER API
+
+- [NodeJS](https://nodejs.org/en)
+- [NPM - Express](https://www.npmjs.com/package/express)
+- [NPM - Swagger UI](https://www.npmjs.com/package/swagger-ui)
+- [Redis](https://redis.io/)
+
+2. CI/CD Pipeline
+
+- [CI/CD Pipelines](https://www.redhat.com/en/topics/devops/what-is-ci-cd?cicd=32h281b)
+- [GitHub Actions](https://github.com/features/actions)
+- [DockerHub](https://hub.docker.com/)
+- [Azure App Service](https://azure.microsoft.com/fr-fr/products/app-service)
+
+3. Infrastructure as a Code
+
+- [Vagrant](https://www.vagrantup.com/)
+- [Ansible](https://www.ansible.com/)
+- [VirtualBox](https://www.virtualbox.org/)
+
+4. Docker Image
+
+- [Docker Builds](https://docs.docker.com/engine/reference/commandline/build/)
+- [DockerHub](https://hub.docker.com/)
+
+5. Docker Compose
+
+- [Docker Compose](https://docs.docker.com/compose/)
+
+6. Orchestration with K8S
+
+- [K8S](https://kubernetes.io/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [kubectl](https://kubernetes.io/docs/reference/kubectl/)
+
+7. Tools and Software used:
+
+- [GitHub Desktop](https://desktop.github.com/)
+- [VS Code](https://code.visualstudio.com/)
+- [MobaXTerm](https://mobaxterm.mobatek.net/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/sualstudio.com/)
+- [Postman](https://www.postman.com/)
 
 # Authors
 

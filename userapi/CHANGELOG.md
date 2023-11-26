@@ -51,3 +51,7 @@
 ### Changed
 
 1. Improve welcome page of user API
+
+### Fixed
+
+1. Remove Health endpoint testing posing problems in Vagrant
