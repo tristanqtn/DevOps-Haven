@@ -15,7 +15,7 @@ course repo : https://github.com/adaltas/ece-devops-2023-fall
 - [x] lab 7: container-orchestration
 - [x] lab 8: storage-in-kubernetes
 - [x] lab 8: cloud-native
-- [ ] lab 8: monitoring
+- [x] lab 8: monitoring
 
 # Notes :
 

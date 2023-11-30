@@ -1,0 +1,2 @@
+echo STARTING STANDALONE DOCKER REDIS SERVER
+docker compose up

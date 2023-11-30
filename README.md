@@ -1,6 +1,6 @@
 # DevOps Project
 
-This repo has been used by Tristan and Apolline for developping the DevOps project but also to do all the [labs](./labs/README.md). This [README.md](./README.md) explains everything you need to know to understand our project, to try it and to reproduce it at home. For the labs, navigate to each lab where you'll find our lab reports.
+This repo has been used by Tristan QUERTON and Apolline PETIT for developping the DevOps project but also to do all the [labs](./labs/README.md). This [README.md](./README.md) explains everything you need to know to understand our project, to try it and to reproduce it at home. For the labs, navigate to each lab where you'll find our lab reports.
 
 # State of the project
 
@@ -16,13 +16,14 @@ This repo has been used by Tristan and Apolline for developping the DevOps proje
 | Monitoring                                                      | MON  |      |
 | Accurate project documentation in README.md file                | DOC  |  ✔   |
 
-| Bonuses                                                                   |     |
-| :------------------------------------------------------------------------ | :-: |
-| CI job for automated build and publish to DockerHub of the USER API image |  ✔  |
-| Implementation of new API methods (Update, Delete, Get all keys)          |  ✔  |
-| Improved tests and new tests for every new API method                     |  ✔  |
-| API documentation using Swagger UI                                        |  ✔  |
-| API health endpoint                                                       |  ✔  |
+| Bonuses                                                                        |     |
+| :----------------------------------------------------------------------------- | :-: |
+| CI job for automated build and publish to DockerHub of the USER API image      |  ✔  |
+| Implementation of new API methods (Update, Delete, Get all keys)               |  ✔  |
+| Improved tests and new tests for every new API method                          |  ✔  |
+| API documentation using Swagger UI                                             |  ✔  |
+| API health endpoint                                                            |  ✔  |
+| Creation of standalone Docker Redis server for local developpement and testing |  ✔  |
 
 # Summary
 
@@ -300,6 +301,8 @@ The expected output of the execution of all test script is the following screens
 
 ![All tests succes](./images/tests.png)
 
+If you don't have Redis installed and you can't install it, don't worry we've created a [Docker Compose file](./labs/tools/standalone_redis/docker-compose.yaml). Run the `docker compose up` command in the given folder `./labs/tools/standalone_redis/`, this will start a standalone Redis server with the correct port mapping.
+
 ## Documentation
 
 A Swagger generator has been added to the API. The API description is available at [API Docs](http://localhost:3000/api-docs)
@@ -503,6 +506,8 @@ Image available on DockerHub:
 docker run -p 3000:3000 -d tristanqtn/userapi-devops:latest
 ```
 
+If you don't have Redis installed and you can't install it, don't worry we've created a [Docker Compose file](./labs/tools/standalone_redis/docker-compose.yaml). Run the `docker compose up` command in the given folder `./labs/tools/standalone_redis/`, this will start a standalone Redis server with the correct port mapping.
+
 ![dockerstandalone](./images/dockerstandalone.png)
 
 You can see on the screenshot above that the container is running. We've just created a Redis container to make sure that the USER API is running correctly. Those two are completly independent even though the API is using the Redis container.
@@ -554,6 +559,8 @@ A K8S PV is represents physical storage resources in the cluster. But this stora
 This [YAML](./k8s/redis-pvc.yaml) file defines a Kubernetes PersistentVolumeClaim (PVC) named `redis-pvc`. It specifies that the claim requires 1Gi of storage with a read-write-once access mode. A PVC is a request for storage that can be fulfilled by a PV. In this case, it is designed to bind to the previously defined `redis-pv` for storage.
 
 A K8S PVC is a request for storage by a user or a pod.
+
+We're using PV and PVC to make the data stored in the Redis pod persistent, thus if this pod has to restart or to be down for a moment, the data won't be lost because it's stored persistently in the PV mounted inside Minikube.
 
 ## Services
 
@@ -624,7 +631,11 @@ kubectl delete deployment redis-deployment
 kubectl delete deployment nodejs-app-deployment
 kubectl delete service nodejs-app-service
 kubectl delete service redis-service
+kubectl delete pvc redis-pvc
+kubectl delete pv redis-pv
 ```
+
+A simple script to perform this cleaning has been created [here](./labs/tools/k8s/user_api_cleaner.sh).
 
 Deleting services, PV, PVC and deployments:
 
@@ -646,6 +657,7 @@ Here's a list of all additional features we've added to our project:
   - Get all keys stored in Redis
 - Improved tests and new tests for every new API method
 - API documentation using Swagger UI
+- [Docker Compose file](./labs/tools/standalone_redis/docker-compose.yaml) for creating a standalone Redis server in Docker usefull for local developpement and testing
 
 # Useful Links
 
