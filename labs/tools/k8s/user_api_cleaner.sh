@@ -9,6 +9,6 @@ kubectl delete pv redis-pv
 echo CHECK EVERYTHING HAS BEEN CLEANED
 kubectl get pods
 kubectl get deployments
-kubectl get serivces
+kubectl get services
 kubectl get pvc
 kubectl get pv
