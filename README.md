@@ -27,6 +27,7 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
 
 # Summary
 
+0. [Prerequisites](#prerequisites)
 1. [USER API](#user-api)
    1. [Installation](#installation)
    2. [Usage](#usage)
@@ -51,8 +52,29 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
    3. [Pods and Deployment](#pods-and-deployement)
    4. [Running app in K8S](#running-app-in-k8s)
 7. [Bonuses](#bonuses)
+   1. [Global Bonuses](#bonuses)
+   2. [DevOps Toolbox](#toolbox)
 8. [Useful Links](#useful-links)
 9. [Authors](#authors)
+
+# Prerequisites
+
+For running this project you'll need the following softwares/apps to be installed on your device.
+
+- [Git](https://git-scm.com/)
+- [NodeJS](https://nodejs.org/en)
+- [npm](https://www.npmjs.com/)
+- [Redis](https://redis.io/)
+- [Vagrant](https://www.vagrantup.com/)
+- [VirtualBox](https://www.virtualbox.org/)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+
+Find in the [Useful Links](#useful-links) part, the docs and installation processes of these softwares.
+
+This project has been designed to run on a Linux machine. Most of the steps will still work on a Windows machine, but you may encounter problems with scripting and VM management. These problems are not due to the project itself but to the execution environment, which we don't master.
 
 # USER API
 
@@ -668,6 +690,24 @@ This [toolbox](./tools/) contains the following scripts:
 - automated deployment of the USER API app in the K8S cluster (including PV, PVC, services and pods deployment)
 - automated cluster cleaner for K8S (deleting PV, PVC, services and deployments)
 - standalone Dockerized Redis container for local dev
+
+IMPORTANT: Those scripts are path sensitive, they have been created to be executed from the root of the project `/ece-devops-ING4-SI-03`. PLease run them as foolows:
+
+```bash
+ece-devops-ING4-SI-03$ sh tools/k8s/user_api_launcher.sh
+```
+
+```bash
+ece-devops-ING4-SI-03$ sh tools/k8s/user_api_cleaner.sh
+```
+
+```bash
+ece-devops-ING4-SI-03$ sh tools/standalone_redis/start.sh
+```
+
+```bash
+ece-devops-ING4-SI-03$ sh tools/docker/image_builder.sh
+```
 
 # Useful Links
 

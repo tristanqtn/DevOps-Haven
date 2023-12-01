@@ -1,16 +1,16 @@
-ECHO CHANGING DIRECTORY
-cd ../../userapi
+echo CHANGING DIRECTORY
+cd ./userapi
 
-ECHO CHECK ./Dockerfile
+echo CHECK PATH
+pwd
+
+echo CHECK ./Dockerfile
 cat ./Dockerfile
 
-ECHO CHECK ./dockerignore
-cat ./dockerignore
-
-ECHO BUILDNG DOCKER IMAGE
+echo BUILDNG DOCKER IMAGE
 docker build -t userapi-devops .
 
-ECHO PUBLISHING DOCKER IMAGE
+echo PUBLISHING DOCKER IMAGE
 docker login
 docker tag userapi tristanqtn/userapi-devops:latest
 docker push tristanqtn/userapi-devops:latest
