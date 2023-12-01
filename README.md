@@ -16,14 +16,14 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
 | Monitoring                                                      | MON  |      |
 | Accurate project documentation in README.md file                | DOC  |  ✔   |
 
-| Bonuses                                                                        |     |
-| :----------------------------------------------------------------------------- | :-: |
-| CI job for automated build and publish to DockerHub of the USER API image      |  ✔  |
-| Implementation of new API methods (Update, Delete, Get all keys)               |  ✔  |
-| Improved tests and new tests for every new API method                          |  ✔  |
-| API documentation using Swagger UI                                             |  ✔  |
-| API health endpoint                                                            |  ✔  |
-| Creation of standalone Docker Redis server for local developpement and testing |  ✔  |
+| Bonuses                                                                   |     |
+| :------------------------------------------------------------------------ | :-: |
+| CI job for automated build and publish to DockerHub of the USER API image |  ✔  |
+| Implementation of new API methods (Update, Delete, Get all keys)          |  ✔  |
+| Improved tests and new tests for every new API method                     |  ✔  |
+| API documentation using Swagger UI                                        |  ✔  |
+| API health endpoint                                                       |  ✔  |
+| Complete DevOps toolbox                                                   |  ✔  |
 
 # Summary
 
@@ -301,7 +301,7 @@ The expected output of the execution of all test script is the following screens
 
 ![All tests succes](./images/tests.png)
 
-If you don't have Redis installed and you can't install it, don't worry we've created a [Docker Compose file](./labs/tools/standalone_redis/docker-compose.yaml). Run the `docker compose up` command in the given folder `./labs/tools/standalone_redis/`, this will start a standalone Redis server with the correct port mapping.
+If you don't have Redis installed and you can't install it, don't worry we've created a [Docker Compose file](./tools/standalone_redis/docker-compose.yaml). Run the `docker compose up` command in the given folder `./tools/standalone_redis/`, this will start a standalone Redis server with the correct port mapping.
 
 ## Documentation
 
@@ -506,7 +506,7 @@ Image available on DockerHub:
 docker run -p 3000:3000 -d tristanqtn/userapi-devops:latest
 ```
 
-If you don't have Redis installed and you can't install it, don't worry we've created a [Docker Compose file](./labs/tools/standalone_redis/docker-compose.yaml). Run the `docker compose up` command in the given folder `./labs/tools/standalone_redis/`, this will start a standalone Redis server with the correct port mapping.
+If you don't have Redis installed and you can't install it, don't worry we've created a [Docker Compose file](./tools/standalone_redis/docker-compose.yaml). Run the `docker compose up` command in the given folder `./labs/tools/standalone_redis/`, this will start a standalone Redis server with the correct port mapping.
 
 ![dockerstandalone](./images/dockerstandalone.png)
 
@@ -657,7 +657,17 @@ Here's a list of all additional features we've added to our project:
   - Get all keys stored in Redis
 - Improved tests and new tests for every new API method
 - API documentation using Swagger UI
-- [Docker Compose file](./labs/tools/standalone_redis/docker-compose.yaml) for creating a standalone Redis server in Docker usefull for local developpement and testing
+
+## Toolbox
+
+In keeping with the devops spirit, we also created a number of shell script that were useful throughout the project. These scripts are basic, but they save a lot of time, because you can run them and concentrate on other things, without having to wait for each command to finish before launching the next one.
+
+This [toolbox](./tools/) contains the following scripts:
+
+- automated Docker build and publish for USER API app
+- automated deployment of the USER API app in the K8S cluster (including PV, PVC, services and pods deployment)
+- automated cluster cleaner for K8S (deleting PV, PVC, services and deployments)
+- standalone Dockerized Redis container for local dev
 
 # Useful Links
 
