@@ -8,12 +8,12 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
 | :-------------------------------------------------------------- | :--: | :--: |
 | Enriched web application with automated tests                   | APP  |  ✔   |
 | Continuous Integration and Continuous Delivery (and Deployment) | CICD |  ✔   |
+| Infrastructure as code using Ansible                            | IAC  |  ✔   |
 | Containerisation with Docker                                    |  D   |  ✔   |
 | Orchestration with Docker Compose                               |  DC  |  ✔   |
 | Orchestration with Kubernetes                                   | KUB  |  ✔   |
-| Service mesh using Istio                                        | IST  |      |
-| Infrastructure as code using Ansible                            | IAC  |  ✔   |
-| Monitoring                                                      | MON  |      |
+| Service mesh using Istio                                        | IST  |  ✔   |
+| Monitoring                                                      | MON  |  ✔   |
 | Accurate project documentation in README.md file                | DOC  |  ✔   |
 
 | Bonuses                                                                   |     |
@@ -51,11 +51,17 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
    2. [Services](#services)
    3. [Pods and Deployment](#pods-and-deployement)
    4. [Running app in K8S](#running-app-in-k8s)
-7. [Bonuses](#bonuses)
+7. [Istio in K8S]()
+   1. [Deploy NodeJS app with istio](#deploy-nodejs-app-with-istio)
+   2. [Deploy addons in K8S cluster](#deploy-addons-in-k8s-cluster)
+      1. [Service Mesh](#service-mesh)
+      2. [Monitoring](#monitoring)
+   3. [Limitations](#limitations)
+8. [Bonuses](#bonuses)
    1. [Global Bonuses](#bonuses)
    2. [DevOps Toolbox](#toolbox)
-8. [Useful Links](#useful-links)
-9. [Authors](#authors)
+9. [Useful Links](#useful-links)
+10. [Authors](#authors)
 
 # Prerequisites
 
@@ -667,6 +673,245 @@ Deleting minikube node directly:
 
 ![minikubedelete](./images/minikubedelete.png)
 
+# Istio in K8S
+
+In the previous step we deployed our application in a K8S cluster but to stop there would be to miss out on the advanced functionality of Kubernetes. So in this part of the project we're going to build on the work done previously in K8S and take it to the next level. With Istio, we'll implement service mesh in our application, and with the help of Prometeus and Grafana, we'll be able to monitor the K8S cluster in real time and set alerts in the event of failure.
+
+In short, we'll be configuring the K8S environment to monitor our application and the health of the cluster, as well as managing intra-cluster routing.
+
+## Deploy NodeJS app with istio
+
+The first step is to configure an empty K8S cluster with Istio. to do so, browse into the `istio` folder:
+
+```bash
+cd istio
+```
+
+Then we must give more ressources than usual to the node because installing Istio will consume a lot of resources. Make sure no minikube node is running or already define and then create the new node:
+
+```bash
+minikube delete
+minikube start --cpus 6 --memory 8192
+```
+
+Just like `kubectl` there's and `istioctl` command used to manage istio inside a node. To add istioctl command to your command prompt you should update locally the `PATH` environnement variable. To do so, run the `pwd` command to get the location of your working directory and then update the `PATH` variable with this path. Dont forget to add the bien folder at the end of the path.
+
+```bash
+pwd
+/home/tristan/Documents/GitHub/ece-devops-ING4-SI-03/istio/
+export PATH=$PATH:/home/tristan/Documents/GitHub/ece-devops-ING4-SI-03/istio/bin
+```
+
+Now the `istioctl` command should be available in you instance of your command prompt.
+
+![istioctl](./images/Screenshot%20from%202023-12-04%2013-19-38.png)
+
+IMPORTANT: This configuration is specific to the window of your command prompt, if you fire a new command prompt the `istioctl` command won't be defined.
+
+At this point you should have an empty K8S cluster running. Check with the two following commands that the cluster is empty and nothing is running:
+
+```bash
+kubectl get ns
+kubectl get pods
+```
+
+![emptycluster](./images/Screenshot%20from%202023-12-04%2013-20-20.png)
+
+It is time to install Istio inside our cluster:
+
+```bash
+istioctl install
+```
+
+Istio should create two pods and a namespace, check that the installation has ended correctly with those two commands:
+
+```bash
+kubectl get ns
+kubectl get pod -n istio-system
+```
+
+The result of the Istio installation should look like this:
+
+![installistio](./images/Screenshot%20from%202023-12-04%2013-22-34.png)
+
+In order to deploy our application pods using the Istio management we have to create a namespace label inside de ndoe.
+
+```bash
+kubectl label namespace default istio-injection=enabled
+```
+
+Check that the label has been added to the default namespace with this command:
+
+```bash
+kubectl get ns default --show-labels
+NAME      STATUS   AGE   LABELS
+default   Active   18d   istio-injection=enabled,kubernetes.io/metadata.name=default
+```
+
+It's now time to deploy the NodeJS application inside the node. We have created a [manifest](./istio/manifest.yaml) file. This file is just the concatenation of all files of the [k8s folder](./k8s/). Thus when executing this `manifest.yaml` with the `kubectl apply` command, it will create 3 pods for the NodeJS app (because we want to do some service mesh), a pod for Redis, a service for each pod and will manage the persistent volume for Redis.
+
+```bash
+kubectl apply -f manifest.yaml
+persistentvolume/redis-pv created
+persistentvolumeclaim/redis-pvc created
+service/redis-service created
+service/nodejs-app-service created
+deployment.apps/redis-deployment created
+deployment.apps/nodejs-app-deployment created
+```
+
+Note the difference with the previous section, now when we deploy with Istio, it creates two containers instead of one for each pod. This is due to the functioning of Istio.
+
+```bash
+kubectl get pods
+NAME                                    READY   STATUS    RESTARTS   AGE
+nodejs-app-deployment-946675b48-qldht   2/2     Running   0          20s
+redis-deployment-57fb5c959b-cldrz       2/2     Running   0          20s
+```
+
+![deployment](./images/Screenshot%20from%202023-12-04%2013-34-31.png)
+
+You can even check the architecture of an Istio managed pod with the following command:
+
+```bash
+kubectl describe pod $YOU_POD_NAME
+```
+
+Now our application is deployed inside and Istio managed cluster. In the following steps we'll plug addons in the cluster to fully exploit all Istio features.
+
+## Deploy addons in K8S cluster
+
+To deploy the addons we just have to run the following command inside the [istio](./istio/) folder. This will install Grafana, Prometheus, Kiali, ...
+
+```bash
+kubectl apply -f /addons/
+```
+
+Make sure all pods have been created with the correct namespace:
+
+```bash
+kubectl get pods -n istio-system
+NAME                                    READY   STATUS    RESTARTS   AGE
+grafana-5f9b8c6c5d-4tmvk                1/1     Running   0          31m
+istio-ingressgateway-56558c9fd7-f75bg   1/1     Running   0          48m
+istiod-7d4885fc54-m9bws                 1/1     Running   0          48m
+jaeger-db6bdfcb4-nr5q4                  1/1     Running   0          31m
+kiali-cc67f8648-hj2gg                   1/1     Running   0          31m
+prometheus-5d5d6d6fc-zt8rr              2/2     Running   0          31m
+```
+
+![addons](./images/Screenshot%20from%202023-12-04%2013-38-40.png)
+
+### Service Mesh
+
+Some services have been created to be able to access all addons. Make sure they are running and healthy with this command.
+
+```bash
+kubectl get services -n istio-system
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                          AGE
+grafana                ClusterIP      10.101.141.166   <none>        3000/TCP                                         82s
+istio-ingressgateway   LoadBalancer   10.111.32.227    <pending>     15021:31482/TCP,80:32750/TCP,443:30541/TCP       18m
+istiod                 ClusterIP      10.96.130.232    <none>        15010/TCP,15012/TCP,443/TCP,15014/TCP            18m
+jaeger-collector       ClusterIP      10.100.255.191   <none>        14268/TCP,14250/TCP,9411/TCP,4317/TCP,4318/TCP   82s
+kiali                  ClusterIP      10.102.186.192   <none>        20001/TCP,9090/TCP                               81s
+loki-headless          ClusterIP      None             <none>        3100/TCP                                         81s
+prometheus             ClusterIP      10.97.230.76     <none>        9090/TCP                                         81s
+tracing                ClusterIP      10.104.184.68    <none>        80/TCP,16685/TCP                                 82s
+zipkin                 ClusterIP      10.107.243.53    <none>        9411/TCP                                         82s
+```
+
+![istioservice](./images/Screenshot%20from%202023-12-04%2013-39-46.png)
+
+To access a service we have to do some port forwarding between the node port and the localhost port. To do so we use to following command.
+
+```bash
+kubectl port-forward svc/$SERVICE_NAME -n istio-system $SERVICE_PORT
+```
+
+For example to access the [Kiali dashboard](http://localhost:20001). We use to command given below.
+
+```bash
+kubectl port-forward svc/kiali -n istio-system 20001
+```
+
+And now Kiali should be accessible from : [Kiali dashboard](http://localhost:20001). You're now in the Kiali dashboard and you can now play arround with service mesh and workload balancing. The 3 replicas of the NodeJS application are meant to be use for practicing service mesh.
+
+Kiali dashboard:
+
+![kiali1](./images/Screenshot%20from%202023-12-04%2014-15-53.png)
+
+Pods managed by Istio:
+
+![kiali2](./images/Screenshot%20from%202023-12-04%2014-16-08.png)
+
+App graph (connections appear when the app is in use):
+
+![kiali3](./images/Screenshot%20from%202023-12-04%2014-16-31.png)
+
+### Monitoring
+
+Some services have been created to be able to access all addons. Make sure they are running and healthy with this command.
+
+```bash
+kubectl get services -n istio-system
+NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                                          AGE
+grafana                ClusterIP      10.101.141.166   <none>        3000/TCP                                         82s
+istio-ingressgateway   LoadBalancer   10.111.32.227    <pending>     15021:31482/TCP,80:32750/TCP,443:30541/TCP       18m
+istiod                 ClusterIP      10.96.130.232    <none>        15010/TCP,15012/TCP,443/TCP,15014/TCP            18m
+jaeger-collector       ClusterIP      10.100.255.191   <none>        14268/TCP,14250/TCP,9411/TCP,4317/TCP,4318/TCP   82s
+kiali                  ClusterIP      10.102.186.192   <none>        20001/TCP,9090/TCP                               81s
+loki-headless          ClusterIP      None             <none>        3100/TCP                                         81s
+prometheus             ClusterIP      10.97.230.76     <none>        9090/TCP                                         81s
+tracing                ClusterIP      10.104.184.68    <none>        80/TCP,16685/TCP                                 82s
+zipkin                 ClusterIP      10.107.243.53    <none>        9411/TCP                                         82s
+```
+
+![istioservice](./images/Screenshot%20from%202023-12-04%2013-39-46.png)
+
+To access a service we have to do some port forwarding between the node port and the localhost port. To do so we use to following command.
+
+```bash
+kubectl port-forward svc/$SERVICE_NAME -n istio-system $SERVICE_PORT
+```
+
+For example to access the [Grafana dashboard](http://localhost:3000). We use to command given below.
+
+```bash
+kubectl port-forward svc/grafana -n istio-system 3000
+```
+
+For [Prometheus dashboard](http://localhost:9090):
+
+```bash
+kubectl port-forward svc/prometheus -n istio-system 9090
+```
+
+We are now able to access either [Grafana](http://localhost:3000) or [Prometheus](http://localhost:9090). Using these two tools, we have defined a very basic metrics capture. This metrics capture checks the health of containers in the cluster and also measures the consumption of resources in the node.
+
+Grafana Dashboard:
+
+![installistio](./images/Screenshot%20from%202023-12-04%2014-11-08.png)
+
+Grafana metrics control dashboard:
+
+![installistio](./images/Screenshot%20from%202023-12-04%2014-11-32.png)
+
+Prometheus dashboard:
+
+![installistio](./images/Screenshot%20from%202023-12-04%2014-15-01.png)
+
+## Limitations
+
+For this part of the project we encountered many problems. These problems were not resource-related, as we were using a sufficiently powerful machine (32GB of RAM and 16 CPUS). To this day, we can't explain why we had so many problems. Despite these problems, the mission was accomplished: the mesh service has been set up and can be configured thanks to Kiali, and the pods and resources are monitored by Prometheus and Grafana.
+
+We weren't able to create alerts between Prometheus and Grafana.
+
+---
+
+Still in keeping with DevOps logic and uclture, launching a K8S cluster managed by Istio can be laborious, so we created a shell script that automates the launch and configuration of the cluster, as well as the installation of Istio, addons and our entire application.
+
+[Automation Script](./tools/k8s/setup_istio.sh)
+
 # Bonuses
 
 Here's a list of all additional features we've added to our project:
@@ -679,6 +924,7 @@ Here's a list of all additional features we've added to our project:
   - Get all keys stored in Redis
 - Improved tests and new tests for every new API method
 - API documentation using Swagger UI
+- Complete DevOps toolbox
 
 ## Toolbox
 
@@ -690,24 +936,36 @@ This [toolbox](./tools/) contains the following scripts:
 - automated deployment of the USER API app in the K8S cluster (including PV, PVC, services and pods deployment)
 - automated cluster cleaner for K8S (deleting PV, PVC, services and deployments)
 - standalone Dockerized Redis container for local dev
+- automated deployment of the NodeJS app in the K8S cluster management with Istio for service mesh and monitoring
 
 IMPORTANT: Those scripts are path sensitive, they have been created to be executed from the root of the project `/ece-devops-ING4-SI-03`. PLease run them as foolows:
 
 ```bash
+ece-devops-ING4-SI-03$ chmod +x tools/k8s/user_api_launcher.sh
 ece-devops-ING4-SI-03$ sh tools/k8s/user_api_launcher.sh
 ```
 
 ```bash
+ece-devops-ING4-SI-03$ chmod +x tools/k8s/user_api_cleaner.sh
 ece-devops-ING4-SI-03$ sh tools/k8s/user_api_cleaner.sh
 ```
 
 ```bash
+ece-devops-ING4-SI-03$ chmod +x tools/standalone_redis/start.sh
 ece-devops-ING4-SI-03$ sh tools/standalone_redis/start.sh
 ```
 
 ```bash
+ece-devops-ING4-SI-03$ chmod +x tools/docker/image_builder.sh
 ece-devops-ING4-SI-03$ sh tools/docker/image_builder.sh
 ```
+
+```bash
+ece-devops-ING4-SI-03$ chmod +x ./tools/k8s/setup_istio.sh
+ece-devops-ING4-SI-03$ sh ./tools/k8s/setup_istio.sh
+```
+
+chmod +x ./tools/k8s/setup_istio.sh
 
 # Useful Links
 
@@ -746,7 +1004,14 @@ ece-devops-ING4-SI-03$ sh tools/docker/image_builder.sh
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [kubectl](https://kubernetes.io/docs/reference/kubectl/)
 
-7. Tools and Software used:
+8. Istio serivce mesh and monitoring
+
+- [Istio](https://istio.io/)
+- [Kiali](https://kiali.io/)
+- [Prometheus](https://prometheus.io/)
+- [Grafana](https://grafana.com/)
+
+9. Tools and Software used:
 
 - [GitHub Desktop](https://desktop.github.com/)
 - [VS Code](https://code.visualstudio.com/)
