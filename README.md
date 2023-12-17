@@ -51,7 +51,7 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
    2. [Services](#services)
    3. [Pods and Deployment](#pods-and-deployement)
    4. [Running app in K8S](#running-app-in-k8s)
-7. [Istio in K8S]()
+7. [Istio in K8S](#istio-in-k8s)
    1. [Deploy NodeJS app with istio](#deploy-nodejs-app-with-istio)
    2. [Deploy addons in K8S cluster](#deploy-addons-in-k8s-cluster)
       1. [Service Mesh](#service-mesh)
@@ -65,7 +65,7 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
 
 # Prerequisites
 
-For running this project you'll need the following softwares/apps to be installed on your device.
+For running this project you'll need the following software/apps to be installed on your device.
 
 - [Git](https://git-scm.com/)
 - [NodeJS](https://nodejs.org/en)
@@ -78,13 +78,13 @@ For running this project you'll need the following softwares/apps to be installe
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
-Find in the [Useful Links](#useful-links) part, the docs and installation processes of these softwares.
+Find in the [Useful Links](#useful-links) part, the docs and installation processes of these software.
 
-This project has been designed to run on a Linux machine. Most of the steps will still work on a Windows machine, but you may encounter problems with scripting and VM management. These problems are not due to the project itself but to the execution environment, which we don't master.
+This project has been designed to run on a Linux machine. Most of the steps will still work on a Windows machine, but you may encounter problems with scripting and VM management. These problems are not due to the project itself but to the execution environment, which we don't control.
 
 # USER API
 
-It is a basic NodeJS web application exposing REST API that creates and stores user parameters in [Redis database](https://redis.io/). This application always the USER to perform CRUD operations.
+It is a basic NodeJS web application exposing REST API that creates and stores user parameters in [Redis database](https://redis.io/). This application allows the USER to perform CRUD operations.
 
 The source code of the application is available at [Source Code](./userapi/src/)
 
@@ -123,7 +123,7 @@ Furthermore, the aim of this project is to deploy this same application in a var
 
 Here few explanations concerning the usage of the application in local mode. This type of deployment requires that Redis and NodeJS are already installed on the hosting device. Redis must be running when you use the application. To make sure Redis is running use the command `redis-cli PING` and Redis should answer with `PONG`.
 
-Start a web server: in the `./userapi` folder run the following command to perform the Node modules installation.
+Start a web server: in the `./userapi` folder run the following command to launch the application.
 
 ```bash
 npm start
@@ -511,6 +511,8 @@ docker push $YOUR_USERNAME/userapi-devops:latest
 The image is now available online. Thus you can perform the installation of this image on any compatible device without needing the source code.
 
 ![dockerhub](./images/dockerhub.png)
+
+Thanks to the DockerHub platform, the image of our application is available online for everyone. Find it using this [link](https://hub.docker.com/repository/docker/tristanqtn/userapi-devops/general).
 
 ## Automation pipeline
 
