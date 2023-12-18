@@ -19,6 +19,7 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
 | Bonuses                                                                   |     |
 | :------------------------------------------------------------------------ | :-: |
 | CI job for automated build and publish to DockerHub of the USER API image |  ✔  |
+| Automated K8S deployments with Helm for variabilisation                   |  ✔  |
 | Implementation of new API methods (Update, Delete, Get all keys)          |  ✔  |
 | Improved tests and new tests for every new API method                     |  ✔  |
 | API documentation using Swagger UI                                        |  ✔  |
@@ -57,11 +58,12 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
       1. [Service Mesh](#service-mesh)
       2. [Monitoring](#monitoring)
    3. [Limitations](#limitations)
-8. [Bonuses](#bonuses)
+8. [Helm Integration](#helm-integration) 1.[Why Helm?](#why-helm) 2.[Implementation](#implementation)
+9. [Bonuses](#bonuses)
    1. [Global Bonuses](#bonuses)
    2. [DevOps Toolbox](#toolbox)
-9. [Useful Links](#useful-links)
-10. [Authors](#authors)
+10. [Useful Links](#useful-links)
+11. [Authors](#authors)
 
 # Prerequisites
 
@@ -77,6 +79,7 @@ For running this project you'll need the following software/apps to be installed
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Helm](https://helm.sh/)
 
 Find in the [Useful Links](#useful-links) part, the docs and installation processes of these software.
 
@@ -914,10 +917,82 @@ Still in keeping with DevOps logic and uclture, launching a K8S cluster managed 
 
 [Automation Script](./tools/k8s/setup_istio.sh)
 
+# Helm Integration
+
+## Why Helm?
+
+[Helm](https://helm.sh/) is a package manager for Kubernetes that simplifies deploying and managing applications on Kubernetes clusters. It allows us to define, install, and upgrade even the most complex Kubernetes applications. We choose here to add this Helm deployment has a bonus to show that K8S deployments can be done with variabilisation. It's interesting to use such features when deploying the same application in different K8S configurations.
+
+## Implementation
+
+We've integrated Helm into our project to streamline the deployment process and manage Kubernetes manifests efficiently. Helm provides a standardized way to package, distribute, and manage Kubernetes applications, making it easier to share and reproduce deployments.
+
+Follow these steps to deploy the project using Helm:
+
+### Prerequisites
+
+- [Helm installed](https://helm.sh/docs/intro/install/)
+
+#### Step 1: Customize Values
+
+Edit the [values.yaml](./helm/values.yaml) file in the `helm` directory to configure your deployment settings, such as image repository, tag, and any other customizable values.
+
+#### Step 2: Install Helm Chart
+
+Run the following command to install the Helm chart:
+
+```bash
+helm install myDeployment ./helm -f helm/values.yaml
+```
+
+Replace `myDeployment` with your desired release name. One the installation has been performed by Helm, you should end up with something like this:
+
+![helminstall](./images/helm_install.png)
+
+#### Step 3: Verify Deployment
+
+Check the status of your deployment:
+
+```bash
+kubectl get deployments
+kubectl get services
+kubectl get pv
+kubectl get pvc
+```
+
+Since the app is running in a pod and the pode is inside a node you have to create a tunnel directly to the NodeJS app with this command (the command uses the service that open the NodeJS pod to outside connection on `port 3000` defined before):
+
+```bash
+minikube service nodejs-app-service
+```
+
+![minikubetunnel](./images/minikubetunnel.png)
+
+![homepage](./images/home_page.png)
+
+#### Step 4: Upgrade Deployment (Optional)
+
+If you make changes to your application or configuration, you can upgrade the deployment using:
+
+```bash
+helm upgrade myDeployment ./helm -f helm/values.yaml
+```
+
+#### Step 5: Uninstall Deployment
+
+To uninstall and delete the deployment, run:
+
+```bash
+helm uninstall myDeployment
+```
+
+![helminstall](./images/helm_uninstall.png)
+
 # Bonuses
 
 Here's a list of all additional features we've added to our project:
 
+- Automated deployment using variables with Helm
 - CI job for automated build and publish to DockerHub of the USER API image
 - API health endpoint
 - Implementation of new API methods
@@ -1013,7 +1088,11 @@ chmod +x ./tools/k8s/setup_istio.sh
 - [Prometheus](https://prometheus.io/)
 - [Grafana](https://grafana.com/)
 
-9. Tools and Software used:
+9. Helm Integration
+
+- [Helm](https://helm.sh/)
+
+10. Tools and Software used:
 
 - [GitHub Desktop](https://desktop.github.com/)
 - [VS Code](https://code.visualstudio.com/)

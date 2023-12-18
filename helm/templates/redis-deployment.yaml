@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.redis.name.deploymentName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+          ports:
+            - containerPort: {{ .Values.nodejsApp.env.REDIS_PORT }}
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.redis.name.pvcName }}

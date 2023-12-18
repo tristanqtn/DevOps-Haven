@@ -1,0 +1,24 @@
+redis:
+  name:
+    pvName: "redis-pv"
+    pvcName: "redis-pvc"
+    serviceName: "redis-service"
+    deploymentName: "redis-deployment"
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 1Gi
+
+nodejsApp:
+  name:
+    serviceName: "nodejs-app-service"
+    deploymentName: "nodejs-app-deployment"
+  replicas: "1"
+  port: "3000"
+  targetPort: "3000"
+  image:
+    repository: tristanqtn/userapi-devops
+    tag: latest
+  env:
+    REDIS_HOST: "redis-service"
+    REDIS_PORT: "6379"
