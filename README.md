@@ -923,6 +923,8 @@ Still in keeping with DevOps logic and uclture, launching a K8S cluster managed 
 
 [Helm](https://helm.sh/) is a package manager for Kubernetes that simplifies deploying and managing applications on Kubernetes clusters. It allows us to define, install, and upgrade even the most complex Kubernetes applications. We choose here to add this Helm deployment has a bonus to show that K8S deployments can be done with variabilisation. It's interesting to use such features when deploying the same application in different K8S configurations.
 
+Using Helm will make it easier to deploy and uninstall our application in a K8S cluster.
+
 ## Implementation
 
 We've integrated Helm into our project to streamline the deployment process and manage Kubernetes manifests efficiently. Helm provides a standardized way to package, distribute, and manage Kubernetes applications, making it easier to share and reproduce deployments.
@@ -939,15 +941,17 @@ Edit the [values.yaml](./helm/values.yaml) file in the `helm` directory to confi
 
 #### Step 2: Install Helm Chart
 
-Run the following command to install the Helm chart:
+Run the following command to install the Helm chart (from the root of this repo):
 
 ```bash
-helm install myDeployment ./helm -f helm/values.yaml
+helm install mydeployment ./helm -f helm/values.yaml
 ```
 
-Replace `myDeployment` with your desired release name. One the installation has been performed by Helm, you should end up with something like this:
+Replace `mydeployment` with your desired release name. One the installation has been performed by Helm, you should end up with something like this:
 
 ![helminstall](./images/helm_install.png)
+
+We strongly recommend you to try to deploy our application in an Istio managed cluster using Helm.
 
 #### Step 3: Verify Deployment
 
@@ -959,6 +963,8 @@ kubectl get services
 kubectl get pv
 kubectl get pvc
 ```
+
+When pods are started check the API health by sending a GET request to the `/health` route. If the answer is positive then go and use the API.
 
 Since the app is running in a pod and the pode is inside a node you have to create a tunnel directly to the NodeJS app with this command (the command uses the service that open the NodeJS pod to outside connection on `port 3000` defined before):
 
@@ -975,7 +981,7 @@ minikube service nodejs-app-service
 If you make changes to your application or configuration, you can upgrade the deployment using:
 
 ```bash
-helm upgrade myDeployment ./helm -f helm/values.yaml
+helm upgrade mydeployment ./helm -f helm/values.yaml
 ```
 
 #### Step 5: Uninstall Deployment
@@ -983,7 +989,7 @@ helm upgrade myDeployment ./helm -f helm/values.yaml
 To uninstall and delete the deployment, run:
 
 ```bash
-helm uninstall myDeployment
+helm uninstall mydeployment
 ```
 
 ![helminstall](./images/helm_uninstall.png)
