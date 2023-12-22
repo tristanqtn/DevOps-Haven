@@ -58,7 +58,9 @@ This repo has been used by Tristan QUERTON and Apolline PETIT for developping th
       1. [Service Mesh](#service-mesh)
       2. [Monitoring](#monitoring)
    3. [Limitations](#limitations)
-8. [Helm Integration](#helm-integration) 1.[Why Helm?](#why-helm) 2.[Implementation](#implementation)
+8. [Helm Integration](#helm-integration)
+   1. [Why Helm?](#why-helm)
+   2. [Implementation](#implementation)
 9. [Bonuses](#bonuses)
    1. [Global Bonuses](#bonuses)
    2. [DevOps Toolbox](#toolbox)
@@ -913,7 +915,7 @@ We weren't able to create alerts between Prometheus and Grafana.
 
 ---
 
-Still in keeping with DevOps logic and uclture, launching a K8S cluster managed by Istio can be laborious, so we created a shell script that automates the launch and configuration of the cluster, as well as the installation of Istio, addons and our entire application.
+Still in keeping with DevOps logic and culture, launching a K8S cluster managed by Istio can be laborious, so we created a shell script that automates the launch and configuration of the cluster, as well as the installation of Istio, addons and our entire application.
 
 [Automation Script](./tools/k8s/setup_istio.sh)
 
