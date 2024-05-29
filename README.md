@@ -1,30 +1,28 @@
-# DevOps Project
+# DevOps Haven
 
-This repo has been used by Tristan QUERTON and Apolline PETIT for developping the DevOps project but also to do all the [labs](./labs/README.md). This [README.md](./README.md) explains everything you need to know to understand our project, to try it and to reproduce it at home. For the labs, navigate to each lab where you'll find our lab reports.
+Centralized hub for my DevOps wisdom – a curated collection of scripts, guides, and best practices to streamline development and operations. Your go-to resource for mastering the art of seamless software delivery. 😎🚀
 
 # State of the project
 
-| Subject                                                         | Code | DONE |
-| :-------------------------------------------------------------- | :--: | :--: |
-| Enriched web application with automated tests                   | APP  |  ✔   |
-| Continuous Integration and Continuous Delivery (and Deployment) | CICD |  ✔   |
-| Infrastructure as code using Ansible                            | IAC  |  ✔   |
-| Containerisation with Docker                                    |  D   |  ✔   |
-| Orchestration with Docker Compose                               |  DC  |  ✔   |
-| Orchestration with Kubernetes                                   | KUB  |  ✔   |
-| Service mesh using Istio                                        | IST  |  ✔   |
-| Monitoring                                                      | MON  |  ✔   |
-| Accurate project documentation in README.md file                | DOC  |  ✔   |
-
-| Bonuses                                                                   |     |
-| :------------------------------------------------------------------------ | :-: |
-| CI job for automated build and publish to DockerHub of the USER API image |  ✔  |
-| Automated K8S deployments with Helm for variabilisation                   |  ✔  |
-| Implementation of new API methods (Update, Delete, Get all keys)          |  ✔  |
-| Improved tests and new tests for every new API method                     |  ✔  |
-| API documentation using Swagger UI                                        |  ✔  |
-| API health endpoint                                                       |  ✔  |
-| Complete DevOps toolbox                                                   |  ✔  |
+| Subject                                                                   | Code | DONE |
+| :------------------------------------------------------------------------ | :--: | :--: |
+| Enriched web application with automated tests                             | APP  |  ✔   |
+| Continuous Integration and Continuous Delivery (and Deployment)           | CICD |  ✔   |
+| Infrastructure as code using Ansible                                      | IAC  |  ✔   |
+| Containerisation with Docker                                              |  D   |  ✔   |
+| Orchestration with Docker Compose                                         |  DC  |  ✔   |
+| Orchestration with Kubernetes                                             | KUB  |  ✔   |
+| Service mesh using Istio                                                  | IST  |  ✔   |
+| Monitoring                                                                | MON  |  ✔   |
+| Accurate project documentation in README.md file                          | DOC  |  ✔   |
+| CI job for automated build and publish to DockerHub of the USER API image | CICD |  ✔   |
+| Automated K8S deployments with Helm for variabilisation                   | K8S  |  ✔   |
+| Implementation of new API methods (Update, Delete, Get all keys)          | APP  |  ✔   |
+| Improved tests and new tests for every new API method                     | CICD |  ✔   |
+| API documentation using Swagger UI                                        | APP  |  ✔   |
+| API health endpoint                                                       | APP  |  ✔   |
+| Complete DevOps toolbox                                                   |      |  ✔   |
+| Ready to use DevOps Infrastructures                                       | INF  |  ✔   |
 
 # Summary
 
