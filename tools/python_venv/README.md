@@ -8,6 +8,8 @@ This script is designed to be used in a directory that contains a Python project
 2. Open a PowerShell window and navigate to your project directory.
 3. Run the script by typing `.\create_venv.ps1` and pressing Enter.
 
+Usage is basically the same for the shell script.
+
 The script will create a new virtual environment with a name that is based on the current directory's name. The virtual environment's name will have the prefix `.venv_`. For example, if the current directory's name is `toto`, the virtual environment's name will be `.venv_toto`.
 
 After the virtual environment is created, the script will activate it. You'll see a confirmation message in the PowerShell window.
