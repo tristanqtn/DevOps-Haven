@@ -1,5 +1,13 @@
 # DevOps Haven
 
+```
+   ___                     ___     _ __                    _  _
+  |   \    ___    __ __   / _ \   | '_ \   ___      o O O | || |   __ _    __ __    ___    _ _
+  | |) |  / -_)   \ V /  | (_) |  | .__/  (_-<     o      | __ |  / _` |   \ V /   / -_)  | ' \
+  |___/   \___|   _\_/_   \___/   |_|__   /__/_   TS__[O] |_||_|  \__,_|   _\_/_   \___|  |_||_|
+_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""| {======|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|
+```
+
 Centralized hub for my DevOps wisdom – a curated collection of scripts, guides, and best practices to streamline development and operations. Your go-to resource for mastering the art of seamless software delivery. 😎🚀
 
 # State of the project
